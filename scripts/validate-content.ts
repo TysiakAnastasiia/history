@@ -3,9 +3,11 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { z } from 'zod'
 import {
+  coverageCheck,
   crossCheck,
   factsFile,
   funFactsFile,
+  programFile,
   questionsFile,
   theoryFile,
   topicsFile,
@@ -45,6 +47,16 @@ const packs: TopicPack[] = readdirSync(ROOT, { withFileTypes: true })
   }))
 errors.push(...crossCheck(packs))
 
+// Покриття програми: для тем, де є program.json
+let covered = 0
+for (const p of packs) {
+  const dir = `topic-${String(p.topic).padStart(2, '0')}`
+  const program = load(`${dir}/program.json`, programFile.nullable(), null)
+  if (!program) continue
+  covered++
+  errors.push(...coverageCheck(p.topic, program, p))
+}
+
 if (errors.length) {
   console.error(
     `✗ Контент містить помилки (${errors.length}):\n` + errors.map((e) => '  ' + e).join('\n'),
@@ -52,4 +64,6 @@ if (errors.length) {
   process.exit(1)
 }
 const n = packs.reduce((s, p) => s + p.questions.length, 0)
-console.log(`✓ Контент у порядку: тем ${packs.length}, питань ${n}`)
+console.log(
+  `✓ Контент у порядку: тем ${packs.length}, питань ${n}, програму покрито повністю в темах: ${covered}`,
+)

@@ -149,3 +149,48 @@ export function crossCheck(packs: TopicPack[]): string[] {
   }
   return errors
 }
+
+/** Вимоги програми до теми: за ними validate перевіряє, що все покрито теорією й питаннями */
+const programItem = z.object({
+  name: text,
+  /** фрагменти, за якими шукати в тексті (за замовчуванням — name) */
+  match: z.array(text).optional(),
+})
+export const programFile = z.object({
+  source: text,
+  dates: z.array(z.object({ year: text, text })),
+  persons: z.array(programItem),
+  terms: z.array(programItem),
+  monuments: z.array(programItem),
+  map: z.array(programItem),
+})
+export type Program = z.infer<typeof programFile>
+
+/** Що з програми не покрито: дати, діячі, терміни, пам’ятки — і в теорії, і в питаннях; карта — у теорії */
+export function coverageCheck(topic: number, program: Program, pack: TopicPack): string[] {
+  const lower = (x: unknown) => JSON.stringify(x).toLowerCase()
+  const theory = lower(pack.theory)
+  const questions = lower(pack.questions)
+  const has = (hay: string, item: { name: string; match?: string[] }) =>
+    (item.match ?? [item.name]).some((m) => hay.includes(m.toLowerCase()))
+  const errors: string[] = []
+  const miss = (kind: string, name: string, where: string) =>
+    errors.push(`тема ${topic}: ${kind} «${name}» не покрито ${where}`)
+  for (const d of program.dates) {
+    if (!theory.includes(d.year)) miss('дата', `${d.year} — ${d.text}`, 'в теорії')
+    if (!questions.includes(d.year)) miss('дата', `${d.year} — ${d.text}`, 'в питаннях')
+  }
+  const groups = [
+    ['персоналія', program.persons],
+    ['термін', program.terms],
+    ['пам’ятка', program.monuments],
+  ] as const
+  for (const [kind, items] of groups) {
+    for (const it of items) {
+      if (!has(theory, it)) miss(kind, it.name, 'в теорії')
+      if (!has(questions, it)) miss(kind, it.name, 'в питаннях')
+    }
+  }
+  for (const it of program.map) if (!has(theory, it)) miss('картосхема', it.name, 'в теорії')
+  return errors
+}
