@@ -12,7 +12,9 @@ import { Topics } from './screens/Topics'
 export default function App() {
   const { profile } = useProfile()
   const { pathname, search } = useLocation()
-  useEffect(() => window.scrollTo(0, 0), [pathname])
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
 
   return (
     // «Анімації: вимк.» або системне «зменшити рух» вимикають рух в усьому застосунку
