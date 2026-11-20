@@ -1,0 +1,15 @@
+# Щоб безкоштовний Supabase не "засинав": двічі на добу робимо простий запит.
+# Потрібні секрети репозиторію: SUPABASE_URL і SUPABASE_ANON_KEY
+name: Supabase keepalive
+on:
+  schedule:
+    - cron: '0 6,18 * * *'
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping database
+        run: |
+          curl -fsS "${{ secrets.SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}"
