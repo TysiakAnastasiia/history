@@ -3,7 +3,11 @@ import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useProfile } from './lib/profile'
 import { Blitz } from './screens/Blitz'
+import { Exam } from './screens/Exam'
+import { Facts } from './screens/Facts'
 import { Home } from './screens/Home'
+import { Mistakes } from './screens/Mistakes'
+import { Mix } from './screens/Mix'
 import { TheorySection } from './screens/TheorySection'
 import { Topic } from './screens/Topic'
 import { TopicQuiz } from './screens/TopicQuiz'
@@ -27,6 +31,10 @@ export default function App() {
         <Route path="/topic/:n/quiz" element={<TopicQuiz key={pathname + search} />} />
         <Route path="/topic/:n/theory/:section" element={<TheorySection />} />
         <Route path="/blitz" element={<Blitz />} />
+        <Route path="/mix" element={<Mix />} />
+        <Route path="/exam" element={<Exam />} />
+        <Route path="/mistakes" element={<Mistakes />} />
+        <Route path="/facts" element={<Facts />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </MotionConfig>

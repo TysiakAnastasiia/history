@@ -4,7 +4,6 @@ import { Quiz } from '../components/Quiz'
 import { BackBar, LinkButton, Screen } from '../components/ui'
 import { PACKS, topicTitle } from '../content'
 import { useProfile } from '../lib/profile'
-import type { SingleQuestion } from '../lib/schema'
 import { shuffle } from '../lib/util'
 
 export function TopicQuiz() {
@@ -16,10 +15,7 @@ export function TopicQuiz() {
   // Набір питань фіксується на старті; інакше «помилки» змінювалися б після кожної відповіді
   const [questions] = useState(() =>
     shuffle(
-      (pack?.questions ?? []).filter(
-        (q): q is SingleQuestion =>
-          q.type === 'single' && (!onlyMistakes || profile.mistakes.includes(q.id)),
-      ),
+      (pack?.questions ?? []).filter((q) => !onlyMistakes || profile.mistakes.includes(q.id)),
     ),
   )
   if (!pack) return <Navigate to="/topics" replace />

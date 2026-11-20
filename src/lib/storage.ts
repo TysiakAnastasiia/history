@@ -12,6 +12,10 @@ export interface Profile {
   read: string[]
   /** id питань, на які остання відповідь була неправильна (для «роботи над помилками») */
   mistakes: string[]
+  /** обрані цікаві факти */
+  favorites: string[]
+  /** найкращий результат пробного НМТ, у балах */
+  examBest: number
   sound: boolean
   animations: boolean
   bigText: boolean
@@ -24,6 +28,8 @@ export const DEFAULT_PROFILE: Profile = {
   bestStreak: 0,
   read: [],
   mistakes: [],
+  favorites: [],
+  examBest: 0,
   sound: true,
   animations: true,
   bigText: false,

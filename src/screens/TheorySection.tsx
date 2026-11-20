@@ -4,7 +4,6 @@ import { Quiz } from '../components/Quiz'
 import { BackBar, Button, Card, LinkButton, Screen } from '../components/ui'
 import { BY_ID, PACKS, topicTitle } from '../content'
 import { useProfile } from '../lib/profile'
-import type { SingleQuestion } from '../lib/schema'
 
 export function TheorySection() {
   const { n: nParam, section } = useParams()
@@ -23,9 +22,7 @@ function SectionView({ n, idx }: { n: number; idx: number }) {
 
   const s = pack.theory[idx]
   const nextSection = pack.theory[idx + 1]
-  const check = s.check
-    .map((id) => BY_ID[id])
-    .filter((q): q is SingleQuestion => q?.type === 'single')
+  const check = s.check.map((id) => BY_ID[id]).filter(Boolean)
   const markRead = () =>
     update((p) => (p.read.includes(s.id) ? p : { ...p, read: [...p.read, s.id] }))
   const after = nextSection ? `/topic/${n}/theory/${nextSection.id}` : `/topic/${n}`

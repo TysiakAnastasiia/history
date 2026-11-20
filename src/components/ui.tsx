@@ -22,12 +22,13 @@ export function Card({ children, className }: { children: ReactNode; className?:
   return <div className={cx('glass p-5', className)}>{children}</div>
 }
 
-type Variant = 'primary' | 'glass' | 'right' | 'wrong'
+type Variant = 'primary' | 'glass' | 'selected' | 'right' | 'wrong'
 
 const variants: Record<Variant, string> = {
   primary:
     'justify-center border-accent bg-accent font-semibold text-accent-ink hover:brightness-105',
   glass: 'glass hover:border-accent',
+  selected: 'glass border-accent! ring-1 ring-accent',
   right: 'glass border-accent! bg-accent/20!',
   wrong: 'glass border-bad! bg-bad/20!',
 }

@@ -52,3 +52,14 @@ export const PACKS: Record<number, TopicPack> = Object.fromEntries(
 export const QUESTIONS: Question[] = Object.values(PACKS).flatMap((p) => p.questions)
 export const BY_ID: Record<string, Question> = Object.fromEntries(QUESTIONS.map((q) => [q.id, q]))
 export const topicTitle = (n: number) => TOPICS.find((t) => t.n === n)?.title ?? `Тема ${n}`
+
+export const FUN_FACTS = Object.values(PACKS).flatMap((p) =>
+  p.funFacts.map((f) => ({ ...f, topic: p.topic })),
+)
+
+/** «Факт дня»: один і той самий упродовж доби, наступного дня — інший */
+export function factOfDay(date = new Date()) {
+  if (FUN_FACTS.length === 0) return null
+  const day = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86_400_000)
+  return FUN_FACTS[day % FUN_FACTS.length]
+}
