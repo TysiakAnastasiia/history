@@ -1,1 +1,81 @@
 @import 'tailwindcss';
+
+/* Кольори задаються змінними: так світла/темна тема перемикаються без dark:-класів у компонентах. */
+:root {
+  --bg-1: #ece8ff;
+  --bg-2: #cfe0ff;
+  --bg-blob: #a99dff;
+  --fg: #1b1650;
+  --muted: #5b5a86;
+  --glass: rgb(255 255 255 / 0.55);
+  --line: rgb(80 70 160 / 0.22);
+  --accent: #e0a800;
+  --accent-ink: #1b1650;
+  /* золотий для тексту: на світлому фоні темніший, щоб читався */
+  --accent-text: #8a6200;
+  --bad: #c62f3b;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg-1: #140f3a;
+    --bg-2: #2a1a6b;
+    --bg-blob: #6a3dff;
+    --fg: #f2efff;
+    --muted: #a9a3d6;
+    --glass: rgb(255 255 255 / 0.08);
+    --line: rgb(255 255 255 / 0.2);
+    --accent: #ffd24a;
+    --accent-text: #ffd24a;
+    --bad: #ff7a86;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg-1: #140f3a;
+  --bg-2: #2a1a6b;
+  --bg-blob: #6a3dff;
+  --fg: #f2efff;
+  --muted: #a9a3d6;
+  --glass: rgb(255 255 255 / 0.08);
+  --line: rgb(255 255 255 / 0.2);
+  --accent: #ffd24a;
+  --bad: #ff7a86;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-glass: var(--glass);
+  --color-line: var(--line);
+  /* Золотий — правильні відповіді й головна дія, червоний — помилки */
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-text: var(--accent-text);
+  --color-bad: var(--bad);
+  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Unbounded', system-ui, sans-serif;
+}
+
+html.big-text {
+  font-size: 125%;
+}
+
+body {
+  min-height: 100dvh;
+  color: var(--fg);
+  background:
+    radial-gradient(60% 45% at 85% 0, var(--bg-blob), transparent 70%),
+    linear-gradient(160deg, var(--bg-1), var(--bg-2)) fixed;
+  background-attachment: fixed;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@layer components {
+  .glass {
+    @apply border-line bg-glass rounded-3xl border backdrop-blur-xl;
+  }
+}

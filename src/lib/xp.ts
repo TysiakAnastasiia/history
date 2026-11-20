@@ -1,19 +1,21 @@
-export const RANKS: [string, string, number][] = [
-  ['Селянин', '🌾', 0],
-  ['Козак', '🐎', 100],
-  ['Сотник', '🛡️', 300],
-  ['Полковник', '🪶', 600],
-  ['Гетьман', '🎖️', 1000],
+export interface Rank {
+  name: string
+  icon: string
+  from: number
+}
+
+export const RANKS: Rank[] = [
+  { name: 'Селянин', icon: '🌾', from: 0 },
+  { name: 'Козак', icon: '🐎', from: 100 },
+  { name: 'Сотник', icon: '🛡️', from: 300 },
+  { name: 'Полковник', icon: '🪶', from: 600 },
+  { name: 'Гетьман', icon: '🎖️', from: 1000 },
 ]
+
+/** Поточне звання і прогрес (0..1) до наступного */
 export function rankOf(xp: number) {
-  let i = 0
-  RANKS.forEach((r, k) => {
-    if (xp >= r[2]) i = k
-  })
-  const n = RANKS[i + 1]
-  return {
-    name: RANKS[i][0],
-    icon: RANKS[i][1],
-    p: n ? (xp - RANKS[i][2]) / (n[2] - RANKS[i][2]) : 1,
-  }
+  const i = RANKS.findLastIndex((r) => xp >= r.from)
+  const cur = RANKS[i]
+  const next = RANKS[i + 1]
+  return { ...cur, next, progress: next ? (xp - cur.from) / (next.from - cur.from) : 1 }
 }

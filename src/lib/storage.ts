@@ -1,9 +1,36 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import type { Profile } from '../types'
+import type { SupabaseClient } from '@supabase/supabase-js'
 
-export const DEFAULT: Profile = { xp: 0, blitz: 0, snd: true, anim: true, big: false }
+export type Theme = 'system' | 'light' | 'dark'
 
-// Єдиний інтерфейс сховища: ігри не знають, де лежать дані.
+export interface Profile {
+  xp: number
+  /** рекорд бліцу */
+  blitz: number
+  /** найдовша серія правильних відповідей */
+  bestStreak: number
+  /** id прочитаних розділів теорії */
+  read: string[]
+  /** id питань, на які остання відповідь була неправильна (для «роботи над помилками») */
+  mistakes: string[]
+  sound: boolean
+  animations: boolean
+  bigText: boolean
+  theme: Theme
+}
+
+export const DEFAULT_PROFILE: Profile = {
+  xp: 0,
+  blitz: 0,
+  bestStreak: 0,
+  read: [],
+  mistakes: [],
+  sound: true,
+  animations: true,
+  bigText: false,
+  theme: 'system',
+}
+
+// Єдиний інтерфейс сховища: екрани не знають, де лежать дані.
 export interface Store {
   mode: 'local' | 'cloud'
   load(): Promise<Profile>
@@ -12,20 +39,21 @@ export interface Store {
 }
 
 const KEY = 'history-profile'
+
 export const localStore: Store = {
   mode: 'local',
   async load() {
     try {
-      return { ...DEFAULT, ...JSON.parse(localStorage.getItem(KEY) || '{}') }
+      return { ...DEFAULT_PROFILE, ...JSON.parse(localStorage.getItem(KEY) || '{}') }
     } catch {
-      return DEFAULT
+      return DEFAULT_PROFILE
     }
   },
   async save(p) {
     try {
       localStorage.setItem(KEY, JSON.stringify(p))
     } catch {
-      /* ignore */
+      /* приватний режим тощо: працюємо без збереження */
     }
   },
   async attempt() {
@@ -33,12 +61,22 @@ export const localStore: Store = {
   },
 }
 
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
-export const supabase: SupabaseClient | null = url && key ? createClient(url, key) : null
+// ---- Хмара (етап 2: підключається після екрана входу) ----
 
-export function cloudStore(uid: string): Store {
-  const sb = supabase!
+const url = import.meta.env.VITE_SUPABASE_URL
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY
+let client: Promise<SupabaseClient | null> | null = null
+
+/** Клієнт Supabase вантажиться лише коли потрібен (бібліотека важка). null — ключі не задані. */
+export function getSupabase() {
+  client ??=
+    url && key
+      ? import('@supabase/supabase-js').then(({ createClient }) => createClient(url, key))
+      : Promise.resolve(null)
+  return client
+}
+
+export function cloudStore(sb: SupabaseClient, uid: string): Store {
   return {
     mode: 'cloud',
     async load() {
@@ -47,15 +85,17 @@ export function cloudStore(uid: string): Store {
         .select('xp,blitz_record,settings')
         .eq('id', uid)
         .maybeSingle()
-      if (!data) return DEFAULT
-      return { ...DEFAULT, ...(data.settings || {}), xp: data.xp, blitz: data.blitz_record }
+      if (!data) return DEFAULT_PROFILE
+      return { ...DEFAULT_PROFILE, ...(data.settings ?? {}), xp: data.xp, blitz: data.blitz_record }
     },
     async save(p) {
+      const { xp, blitz, ...settings } = p
       await sb.from('profiles').upsert({
         id: uid,
-        xp: p.xp,
-        blitz_record: p.blitz,
-        settings: { snd: p.snd, anim: p.anim, big: p.big },
+        xp,
+        blitz_record: blitz,
+        settings,
+        updated_at: new Date().toISOString(),
       })
     },
     async attempt(itemId, game, correct) {

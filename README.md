@@ -14,11 +14,11 @@
 
 ### 1. Встановити інструменти
 
-| Що                                                    | Звідки                        | Перевірка            |
-| ----------------------------------------------------- | ----------------------------- | -------------------- |
-| **Git**                                               | https://git-scm.com/downloads | `git --version`      |
-| **Node.js LTS** (версія 22 або новіша, npm іде разом) | https://nodejs.org            | `node -v` і `npm -v` |
-| **VS Code**                                           | https://code.visualstudio.com | —                    |
+| Що                                                       | Звідки                        | Перевірка            |
+| -------------------------------------------------------- | ----------------------------- | -------------------- |
+| **Git**                                                  | https://git-scm.com/downloads | `git --version`      |
+| **Node.js LTS** (версія 22.18 або новіша, npm іде разом) | https://nodejs.org            | `node -v` і `npm -v` |
+| **VS Code**                                              | https://code.visualstudio.com | —                    |
 
 Після встановлення **закрийте й знову відкрийте термінал**, інакше команди `git` / `node` можуть бути «не знайдені».
 
@@ -98,30 +98,72 @@ npm run preview       # переглянути зібраний сайт: http:/
 
 ## Команди
 
-| Команда                | Що робить                               |
-| ---------------------- | --------------------------------------- |
-| `npm run dev`          | сервер розробки з автооновленням        |
-| `npm run build`        | перевірка TypeScript і збірка в `dist/` |
-| `npm run preview`      | локальний перегляд зібраної версії      |
-| `npm run lint`         | перевірка коду лінтером oxlint          |
-| `npm run format`       | відформатувати всі файли Prettier'ом    |
-| `npm run format:check` | лише перевірити форматування            |
+| Команда                | Що робить                                         |
+| ---------------------- | ------------------------------------------------- |
+| `npm run dev`          | сервер розробки з автооновленням                  |
+| `npm run validate`     | перевірка контенту за схемою                      |
+| `npm run build`        | перевірка контенту й TypeScript, збірка в `dist/` |
+| `npm run preview`      | локальний перегляд зібраної версії                |
+| `npm run lint`         | перевірка коду лінтером oxlint                    |
+| `npm run format`       | відформатувати всі файли Prettier'ом              |
+| `npm run format:check` | лише перевірити форматування                      |
 
 ## Структура
 
 ```
-.github/workflows/deploy.yml   автодеплой на GitHub Pages
-public/                        статичні файли (копіюються як є)
-  sounds/                      звукові ефекти
+.github/workflows/
+  deploy.yml                   збірка на кожен push, публікація на GitHub Pages
+  keepalive.yml                щоденний запит до Supabase, щоб проєкт не «засинав»
+content/hist-ua/
+  topics.json                  список 32 тем
+  topic-NN/                    пакет теми (нова тема = нова папка, підхоплюється автоматично)
+    theory.json                розділи теорії: текст, «Запам'ятай», «Перевір себе»
+    questions.json             питання з поясненнями
+    facts.json                 факти (дати, діячі, терміни), на які посилаються питання
+    fun.json                   цікаві факти (необов'язково)
+scripts/validate-content.ts    перевірка контенту за схемою (npm run validate)
+supabase/schema.sql            таблиці та правила доступу Supabase
+public/sounds/                 звукові ефекти
 src/
-  components/                  спільні UI-компоненти
-  games/                       ігри (бліц, картки, хронологія…)
-  data/                        JSON з питаннями та контентом тем
-  lib/                         утиліти, схеми Zod (questionSchema.ts)
-  App.tsx                      маршрути
-  main.tsx                     точка входу (HashRouter)
-  index.css                    підключення Tailwind
-vite.config.ts                 base: '/history/' для GitHub Pages
+  lib/schema.ts                ЄДИНА схема контенту (Zod) і типи
+  lib/storage.ts               профіль і сховище (зараз локальне, хмара — етап 2)
+  lib/profile.ts               хук useProfile
+  lib/xp.ts                    звання та XP
+  components/                  UI-компоненти, Quiz, Mascot
+  screens/                     екрани (головна, теми, тема, тренування, теорія, бліц)
+  games/                       ігри
+  content.ts                   завантаження контенту
+  index.css                    Tailwind + кольори світлої/темної теми
+```
+
+## Контент
+
+Схема описана в [src/lib/schema.ts](src/lib/schema.ts). Перед кожною збіркою `npm run validate` перевіряє всі JSON: поля, кількість варіантів, унікальність id, посилання на розділи, питання й факти, наявність пояснення до кожного неправильного варіанта. Якщо щось не так — збірка падає зі списком помилок.
+
+Типи питань: `single` (1 із 4), `multi3of7` (3 із 7), `matching` (відповідність 4→5), `sequence` (послідовність). Поки що на сайті працює лише `single`.
+
+Приклад питання:
+
+```json
+{
+  "id": "hist-ua.t03.q001",
+  "type": "single",
+  "topic": 3,
+  "section": "s3",
+  "facts": ["hist-ua.t03.f-988"],
+  "status": "draft",
+  "prompt": "Хто охрестив Русь у 988 р.?",
+  "options": [
+    { "text": "Олег", "note": "чому неправильно" },
+    { "text": "Ігор", "note": "чому неправильно" },
+    { "text": "Володимир Великий" },
+    { "text": "Ярослав Мудрий", "note": "чому неправильно" }
+  ],
+  "answer": 2,
+  "short": "Коротко",
+  "why": "Чому так",
+  "mnemonic": "Як запам'ятати"
+}
 ```
 
 ## Щоденний процес роботи
@@ -133,7 +175,7 @@ git checkout -b feature/назва     # нова гілка на кожне з�
 
 # ...робота...
 
-npm run lint && npm run build     # перевірка перед комітом
+npm run lint && npm run build     # перевірка перед комітом (build перевіряє і контент)
 git add .
 git commit -m "Короткий опис змін"
 git push -u origin feature/назва

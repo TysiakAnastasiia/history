@@ -3,12 +3,15 @@ import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
+import { ProfileProvider } from './components/ProfileProvider'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* HashRouter: на GitHub Pages немає серверних редиректів, тому маршрути йдуть після # */}
     <HashRouter>
-      <App />
+      <ProfileProvider>
+        <App />
+      </ProfileProvider>
     </HashRouter>
   </StrictMode>,
 )
