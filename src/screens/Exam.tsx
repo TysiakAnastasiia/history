@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Explanation } from '../components/Explanation'
 import { Mascot } from '../components/Mascot'
 import { QuestionView } from '../components/QuestionView'
@@ -129,12 +130,8 @@ function Running({
     if (left <= 0) onFinish()
   }, [left, onFinish])
 
-  const finish = useCallback(() => {
-    const msg = unanswered
-      ? `Без відповіді: ${unanswered}. Завершити тест?`
-      : 'Завершити тест і подивитися результат?'
-    if (window.confirm(msg)) onFinish()
-  }, [unanswered, onFinish])
+  const [asking, setAsking] = useState(false)
+  const finish = () => setAsking(true)
 
   const mm = String(Math.floor(Math.max(left, 0) / 60)).padStart(2, '0')
   const ss = String(Math.max(left, 0) % 60).padStart(2, '0')
@@ -210,6 +207,19 @@ function Running({
           Завершити тест достроково
         </button>
       )}
+
+      <ConfirmDialog
+        open={asking}
+        title="Завершити тест?"
+        confirmLabel="Завершити"
+        cancelLabel="Повернутися до тесту"
+        onConfirm={onFinish}
+        onCancel={() => setAsking(false)}
+      >
+        {unanswered > 0
+          ? `Без відповіді залишилось завдань: ${unanswered}. Вони отримають 0 балів.`
+          : 'Ви відповіли на всі завдання. Можна дивитися результат.'}
+      </ConfirmDialog>
     </>
   )
 }
