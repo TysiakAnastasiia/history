@@ -33,10 +33,7 @@ jobs:
         with:
           path: dist
 
-  # Поки Pages не ввімкнено, на push лише перевіряємо збірку.
-  # Після ввімкнення Pages (Settings → Pages → Source: GitHub Actions) прибрати рядок `if:`.
   deploy:
-    if: github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     environment:

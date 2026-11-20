@@ -187,9 +187,8 @@ git push -u origin feature/назва
 
 1. GitHub → репозиторій → **Settings → Pages**.
 2. **Build and deployment → Source: GitHub Actions**.
-3. У [.github/workflows/deploy.yml](.github/workflows/deploy.yml) прибрати рядок `if: github.event_name == 'workflow_dispatch'` у job `deploy` (поки його не прибрано, push у `main` лише перевіряє збірку, а публікація — тільки вручну).
-4. Запушити будь-що в `main` (або **Actions → Deploy to GitHub Pages → Run workflow**).
-5. Сайт з'явиться на `https://<логін>.github.io/history/`.
+3. Запушити будь-що в `main` (або **Actions → Deploy to GitHub Pages → Run workflow**).
+4. Сайт з'явиться на `https://<логін>.github.io/history/`.
 
 Якщо репозиторій перейменовано, змініть `base` у [vite.config.ts](vite.config.ts) на `'/<нова-назва>/'`.
 
