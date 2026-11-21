@@ -6,6 +6,9 @@ import { PACKS, topicTitle } from '../content'
 import { useProfile } from '../lib/profile'
 import { shuffle } from '../lib/util'
 
+/** Скільки питань в одному раунді тренування теми */
+const ROUND = 20
+
 export function TopicQuiz() {
   const n = Number(useParams().n)
   const onlyMistakes = useSearchParams()[0].has('mistakes')
@@ -13,11 +16,13 @@ export function TopicQuiz() {
   const pack = PACKS[n]
 
   // Набір питань фіксується на старті; інакше «помилки» змінювалися б після кожної відповіді
-  const [questions] = useState(() =>
-    shuffle(
+  const [questions] = useState(() => {
+    const pool = shuffle(
       (pack?.questions ?? []).filter((q) => !onlyMistakes || profile.mistakes.includes(q.id)),
-    ),
-  )
+    )
+    // Тренування — раунди по ROUND випадкових питань; помилки — усі одразу
+    return onlyMistakes ? pool : pool.slice(0, ROUND)
+  })
   if (!pack) return <Navigate to="/topics" replace />
 
   return (

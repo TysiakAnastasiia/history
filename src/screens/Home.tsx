@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { Icon } from '../components/Icon'
 import { Mascot } from '../components/Mascot'
 import { useAuth } from '../lib/auth'
 import { BY_ID, factOfDay } from '../content'
@@ -17,7 +18,7 @@ const THEMES: { value: Theme; label: string }[] = [
 
 export function Home() {
   const { profile, update } = useProfile()
-  const { email, signOut } = useAuth()
+  const { mode, email, signOut, signIn } = useAuth()
   const [askOut, setAskOut] = useState(false)
   const set = <K extends keyof Profile>(k: K, v: Profile[K]) => update((p) => ({ ...p, [k]: v }))
   const themeIdx = Math.max(
@@ -31,51 +32,56 @@ export function Home() {
   return (
     <Screen>
       <RankBar />
-      <div className="mt-6">
-        <Mascot />
+      <div className="mt-6 mb-4 flex items-end justify-between gap-4">
+        <div>
+          <p className="text-muted mb-4 text-xs font-semibold tracking-[0.2em] uppercase">
+            НМТ · тренажер
+          </p>
+          <Title>
+            Історія
+            <br />
+            <span className="text-accent-text italic">України</span>
+          </Title>
+        </div>
+        <Mascot size={140} />
       </div>
-      <Title>
-        Історія
-        <br />
-        України
-      </Title>
-      <p className="text-muted mb-6 text-lg">Тренажер до НМТ</p>
 
       <LinkButton to="/topics" variant="primary">
         Тренування по темах
+        <Icon name="arrow" />
       </LinkButton>
       <LinkButton to="/exam">
-        <span aria-hidden>📝</span> Пробний НМТ
+        <Icon name="exam" /> Пробний НМТ
         <Aside>
           {profile.examBest > 0 ? `рекорд ${profile.examBest}/54` : '30 завдань · 60 хв'}
         </Aside>
       </LinkButton>
       <LinkButton to="/mix">
-        <span aria-hidden>🔀</span> Мікс з усіх тем
+        <Icon name="shuffle" /> Мікс з усіх тем
       </LinkButton>
       <LinkButton to="/blitz">
-        <span aria-hidden>⚡</span> Бліц 60 секунд
+        <Icon name="bolt" /> Бліц 60 секунд
         <Aside>рекорд {profile.blitz}</Aside>
       </LinkButton>
       {mistakes > 0 && (
         <LinkButton to="/mistakes">
-          <span aria-hidden>🎯</span> Робота над помилками
+          <Icon name="target" /> Робота над помилками
           <Aside>{mistakes}</Aside>
         </LinkButton>
       )}
 
       {fact && (
-        <Link to="/facts" className="glass hover:border-accent mt-3 block p-5 transition">
-          <div className="text-muted mb-1 text-sm font-semibold">Факт дня</div>
-          <p className="leading-relaxed">{fact.text}</p>
+        <Link to="/facts" className="glass hover:border-fg/25 mt-3 block p-5 transition">
+          <div className="text-muted mb-2 text-xs font-semibold tracking-[0.18em] uppercase">
+            Факт дня
+          </div>
+          <p className="font-display text-xl leading-snug">{fact.text}</p>
           <div className="text-accent-text mt-2 text-sm font-semibold">Усі цікаві факти →</div>
         </Link>
       )}
       <Button disabled className="opacity-60">
-        <span>
-          <span aria-hidden>⚓</span> Морський бій · <span aria-hidden>🏰</span> Захист фортеці ·{' '}
-          <span aria-hidden>🃏</span> Картки
-        </span>
+        <Icon name="games" />
+        <span>Морський бій · Захист фортеці · Картки</span>
         <Aside>скоро</Aside>
       </Button>
 
@@ -92,12 +98,24 @@ export function Home() {
         <span className="ml-auto font-semibold">{THEMES[themeIdx].label}</span>
       </Button>
       <SectionTitle>Акаунт</SectionTitle>
-      {email ? (
+      {mode === 'cloud' && (
         <Button onClick={() => setAskOut(true)}>
           <span className="min-w-0 truncate">{email}</span>
           <span className="text-bad ml-auto shrink-0 font-semibold">Вийти</span>
         </Button>
-      ) : (
+      )}
+      {mode === 'guest' && (
+        <Button onClick={signIn}>
+          <span className="min-w-0">
+            Ви не ввійшли
+            <span className="text-muted block text-sm">
+              Прогрес зберігається лише в цьому браузері
+            </span>
+          </span>
+          <span className="ml-auto shrink-0 font-semibold">Увійти →</span>
+        </Button>
+      )}
+      {mode === 'local' && (
         <p className="text-muted text-sm">
           Локальний режим: ключі Supabase не задані, прогрес зберігається лише в цьому браузері.
         </p>

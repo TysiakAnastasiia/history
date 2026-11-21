@@ -105,7 +105,7 @@ export function Quiz({ questions, mode = 'learn', game, readMore = true, finish 
     return (
       <Card className="flex flex-col items-center gap-2 text-center">
         <Mascot mood={good >= total / 2 && good > 0 ? 'happy' : 'sad'} size={110} />
-        <div className="font-display text-6xl font-extralight">{good}</div>
+        <div className="font-sans text-6xl font-extralight">{good}</div>
         <p className="text-muted">{blitz ? 'правильних за 60 секунд' : `правильних із ${total}`}</p>
         <div className="mt-3 w-full">{finish(good, total)}</div>
       </Card>
@@ -121,13 +121,13 @@ export function Quiz({ questions, mode = 'learn', game, readMore = true, finish 
   return (
     <>
       <div className="flex items-end justify-between px-1">
-        <span className="font-display text-4xl font-extralight tabular-nums">
+        <span className="font-sans text-4xl font-extralight tabular-nums">
           {String(i + 1).padStart(2, '0')}
           {!blitz && <span className="text-muted text-lg"> / {list.length}</span>}
         </span>
         {blitz ? (
           <span
-            className={`font-display text-4xl font-extralight tabular-nums ${time <= 10 ? 'text-bad' : ''}`}
+            className={`font-sans text-4xl font-extralight tabular-nums ${time <= 10 ? 'text-bad' : ''}`}
             aria-label={`Залишилось ${time} секунд`}
           >
             {time}

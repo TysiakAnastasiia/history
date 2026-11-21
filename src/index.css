@@ -1,48 +1,66 @@
 @import 'tailwindcss';
 
-/* Кольори задаються змінними: так світла/темна тема перемикаються без dark:-класів у компонентах. */
+/*
+  Дизайн-токени. Уся палітра — тут: щоб перефарбувати сайт, достатньо змінити ці змінні.
+  Стиль: теплі нейтральні тони, напівпрозорі «скляні» панелі, темні кнопки-«пігулки».
+*/
 :root {
-  --bg-1: #ece8ff;
-  --bg-2: #cfe0ff;
-  --bg-blob: #a99dff;
-  --fg: #1b1650;
-  --muted: #5b5a86;
+  --bg-1: #f6f3ee;
+  --bg-2: #e9e3d9;
+  --bg-glow: #ffffff;
+  --fg: #1f1b17;
+  --muted: #7a7168;
   --glass: rgb(255 255 255 / 0.55);
-  --line: rgb(80 70 160 / 0.22);
-  --accent: #e0a800;
-  --accent-ink: #1b1650;
-  /* золотий для тексту: на світлому фоні темніший, щоб читався */
-  --accent-text: #8a6200;
-  --bad: #c62f3b;
+  --glass-strong: rgb(255 255 255 / 0.82);
+  --line: rgb(31 27 23 / 0.1);
+  /* головна дія: темна кнопка зі світлим текстом */
+  --primary: #1f1b17;
+  --primary-fg: #f6f3ee;
+  /* золотий акцент — правильні відповіді, прогрес */
+  --accent: #b08a4e;
+  --accent-text: #8a6a35;
+  /* текст на золотому тлі */
+  --accent-ink: #1f1b17;
+  --bad: #b3463c;
+  --scroll: rgb(31 27 23 / 0.22);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg-1: #140f3a;
-    --bg-2: #2a1a6b;
-    --bg-blob: #6a3dff;
-    --fg: #f2efff;
-    --muted: #a9a3d6;
-    --glass: rgb(255 255 255 / 0.08);
-    --line: rgb(255 255 255 / 0.2);
-    --accent: #ffd24a;
-    --accent-text: #ffd24a;
-    --bad: #ff7a86;
+    --bg-1: #151311;
+    --bg-2: #1e1b18;
+    --bg-glow: #3a3128;
+    --fg: #f3efe9;
+    --muted: #a39a90;
+    --glass: rgb(255 255 255 / 0.05);
+    --glass-strong: rgb(40 35 31 / 0.92);
+    --line: rgb(255 255 255 / 0.1);
+    --primary: #f3efe9;
+    --primary-fg: #1f1b17;
+    --accent: #d2b07a;
+    --accent-text: #d9ba88;
+    --bad: #e2786c;
+    --scroll: rgb(255 255 255 / 0.2);
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg-1: #140f3a;
-  --bg-2: #2a1a6b;
-  --bg-blob: #6a3dff;
-  --fg: #f2efff;
-  --muted: #a9a3d6;
-  --glass: rgb(255 255 255 / 0.08);
-  --line: rgb(255 255 255 / 0.2);
-  --accent: #ffd24a;
-  --bad: #ff7a86;
+  --bg-1: #151311;
+  --bg-2: #1e1b18;
+  --bg-glow: #3a3128;
+  --fg: #f3efe9;
+  --muted: #a39a90;
+  --glass: rgb(255 255 255 / 0.05);
+  --glass-strong: rgb(40 35 31 / 0.92);
+  --line: rgb(255 255 255 / 0.1);
+  --primary: #f3efe9;
+  --primary-fg: #1f1b17;
+  --accent: #d2b07a;
+  --accent-text: #d9ba88;
+  --bad: #e2786c;
+  --scroll: rgb(255 255 255 / 0.2);
   color-scheme: dark;
 }
 
@@ -50,14 +68,17 @@
   --color-fg: var(--fg);
   --color-muted: var(--muted);
   --color-glass: var(--glass);
+  --color-glass-strong: var(--glass-strong);
   --color-line: var(--line);
-  /* Золотий — правильні відповіді й головна дія, червоний — помилки */
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
   --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
   --color-accent-text: var(--accent-text);
+  --color-accent-ink: var(--accent-ink);
   --color-bad: var(--bad);
   --font-sans: 'Manrope', system-ui, sans-serif;
-  --font-display: 'Unbounded', system-ui, sans-serif;
+  /* заголовки: елегантний шрифт із засічками */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
 }
 
 html.big-text {
@@ -68,10 +89,32 @@ body {
   min-height: 100dvh;
   color: var(--fg);
   background:
-    radial-gradient(60% 45% at 85% 0, var(--bg-blob), transparent 70%),
-    linear-gradient(160deg, var(--bg-1), var(--bg-2)) fixed;
+    radial-gradient(55% 40% at 80% 0%, var(--bg-glow), transparent 70%),
+    linear-gradient(170deg, var(--bg-1), var(--bg-2));
   background-attachment: fixed;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Кастомні скролбари: тонкі, у тон інтерфейсу */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scroll);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--muted);
 }
 
 @layer components {

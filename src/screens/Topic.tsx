@@ -18,7 +18,7 @@ export function Topic() {
       <Title>{topicTitle(n)}</Title>
 
       <LinkButton to={`/topic/${n}/quiz`} variant="primary" className="mt-4">
-        Тренування · {pack.questions.length} питань
+        Тренування · {Math.min(20, pack.questions.length)} з {pack.questions.length} питань
       </LinkButton>
       {mistakes > 0 && (
         <LinkButton to={`/topic/${n}/quiz?mistakes=1`}>

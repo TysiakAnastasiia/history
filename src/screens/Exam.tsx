@@ -139,12 +139,12 @@ function Running({
   return (
     <>
       <div className="flex items-end justify-between px-1">
-        <span className="font-display text-4xl font-extralight tabular-nums">
+        <span className="font-sans text-4xl font-extralight tabular-nums">
           {String(i + 1).padStart(2, '0')}
           <span className="text-muted text-lg"> / {tasks.length}</span>
         </span>
         <span
-          className={`font-display text-3xl font-extralight tabular-nums ${left <= 300 ? 'text-bad' : ''}`}
+          className={`font-sans text-3xl font-extralight tabular-nums ${left <= 300 ? 'text-bad' : ''}`}
           aria-label={`Залишилось ${mm} хвилин ${ss} секунд`}
         >
           {mm}:{ss}
@@ -261,7 +261,7 @@ function Results({
     <>
       <Card className="flex flex-col items-center gap-1 text-center">
         <Mascot mood={total >= max / 2 && total > 0 ? 'happy' : 'sad'} size={110} />
-        <div className="font-display text-6xl font-extralight">{total}</div>
+        <div className="font-sans text-6xl font-extralight">{total}</div>
         <p className="text-muted">
           балів із {max}
           {max !== FULL_MAX && ` (на справжньому НМТ — ${FULL_MAX})`} · +{total * 5} XP

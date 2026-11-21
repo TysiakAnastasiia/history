@@ -26,16 +26,16 @@ type Variant = 'primary' | 'glass' | 'selected' | 'right' | 'wrong'
 
 const variants: Record<Variant, string> = {
   primary:
-    'justify-center border-accent bg-accent font-semibold text-accent-ink hover:brightness-105',
-  glass: 'glass hover:border-accent',
+    'justify-center rounded-full border-primary bg-primary font-semibold text-primary-fg hover:opacity-90',
+  glass: 'glass hover:border-fg/25',
   selected: 'glass border-accent! ring-1 ring-accent',
-  right: 'glass border-accent! bg-accent/20!',
-  wrong: 'glass border-bad! bg-bad/20!',
+  right: 'glass border-accent! bg-accent/15!',
+  wrong: 'glass border-bad! bg-bad/12!',
 }
 
 const base =
-  'flex w-full min-h-14 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ' +
-  'focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-accent ' +
+  'flex w-full min-h-14 items-center gap-3 rounded-2xl border px-5 py-3 text-left transition ' +
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fg ' +
   'disabled:cursor-default'
 
 export function Button({
@@ -75,7 +75,7 @@ export function BackBar({ to = '/', children }: { to?: string; children?: ReactN
       <Link
         to={to}
         aria-label="Назад"
-        className="glass hover:border-accent flex size-11 shrink-0 items-center justify-center rounded-full"
+        className="glass hover:border-fg/25 flex size-11 shrink-0 items-center justify-center rounded-full"
       >
         ←
       </Link>
@@ -116,12 +116,16 @@ export function Toggle({
 
 export function Title({ children }: { children: ReactNode }) {
   return (
-    <h1 className="font-display text-[clamp(2.25rem,10vw,3.5rem)] leading-[1.05] font-extralight tracking-tight">
+    <h1 className="font-display text-[clamp(2.75rem,12vw,4.25rem)] leading-[0.95] font-medium tracking-tight">
       {children}
     </h1>
   )
 }
 
 export function SectionTitle({ children }: { children: ReactNode }) {
-  return <h2 className="mt-3 text-lg font-semibold">{children}</h2>
+  return (
+    <h2 className="text-muted mt-5 text-xs font-semibold tracking-[0.18em] uppercase">
+      {children}
+    </h2>
+  )
 }

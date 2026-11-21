@@ -52,9 +52,9 @@ export function ConfirmDialog({
           initial={{ opacity: 0, scale: 0.92, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="glass flex flex-col items-center gap-3 bg-[color-mix(in_srgb,var(--bg-2)_85%,transparent)] p-6 text-center"
+          className="border-line bg-glass-strong flex flex-col items-center gap-3 rounded-3xl border p-6 text-center shadow-2xl backdrop-blur-xl"
         >
-          <Mascot size={72} />
+          <Mascot size={96} />
           <h2 id="confirm-title" className="text-xl font-semibold">
             {title}
           </h2>

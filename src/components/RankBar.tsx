@@ -12,8 +12,7 @@ export function RankBar() {
         r.next ? `До звання «${r.next.name}»: ${r.next.from - profile.xp} XP` : 'Найвище звання'
       }
     >
-      <span aria-hidden>{r.icon}</span>
-      <span className="text-lg">{r.name}</span>
+      <span className="font-display text-xl font-medium">{r.name}</span>
       <ProgressBar value={r.progress} />
       <span className="text-muted text-sm">{profile.xp} XP</span>
     </div>
