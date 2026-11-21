@@ -7,6 +7,8 @@ import {
   crossCheck,
   factsFile,
   funFactsFile,
+  mapsFile,
+  mediaFile,
   programFile,
   questionsFile,
   theoryFile,
@@ -44,8 +46,13 @@ const packs: TopicPack[] = readdirSync(ROOT, { withFileTypes: true })
     funFacts: load(`${d.name}/fun.json`, funFactsFile, []),
     theory: load(`${d.name}/theory.json`, theoryFile, []),
     questions: load(`${d.name}/questions.json`, questionsFile, []),
+    maps: load(`${d.name}/maps.json`, mapsFile, []),
   }))
-errors.push(...crossCheck(packs))
+const media = load('media.json', mediaFile, [])
+for (const m of media)
+  if (!existsSync(join('public/media', m.file)))
+    errors.push(`media.json → ${m.id}: немає файлу public/media/${m.file}`)
+errors.push(...crossCheck(packs, media))
 
 // Покриття програми: для тем, де є program.json
 let covered = 0

@@ -7,12 +7,14 @@ import type { Question } from './schema'
  * - multi3of7: вибрані індекси
  * - matching: для кожного рядка 1–4 індекс букви (null — не вибрано)
  * - sequence: індекси items у вибраному порядку
+ * - mapPick: id області на карті
  */
-export type Response = number | (number | null)[] | null
+export type Response = number | string | (number | null)[] | null
 
 export function maxPoints(q: Question): number {
   switch (q.type) {
     case 'single':
+    case 'mapPick':
       return 1
     case 'matching':
       return 4
@@ -26,6 +28,7 @@ export function score(q: Question, r: Response): number {
   if (r === null) return 0
   switch (q.type) {
     case 'single':
+    case 'mapPick':
       return r === q.answer ? 1 : 0
     case 'multi3of7': {
       // 1 бал за кожен правильний варіант; вибрати можна не більше трьох
@@ -51,6 +54,8 @@ export function isComplete(q: Question, r: Response): boolean {
   switch (q.type) {
     case 'single':
       return typeof r === 'number'
+    case 'mapPick':
+      return typeof r === 'string'
     case 'multi3of7':
       return (r as number[]).length === 3
     case 'matching':
@@ -65,6 +70,7 @@ export const TYPE_LABEL: Record<Question['type'], string> = {
   matching: 'Установіть відповідність',
   sequence: 'Установіть послідовність',
   multi3of7: 'Три правильні відповіді із семи',
+  mapPick: 'Покажіть на картосхемі',
 }
 
 export const LETTERS = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Є']
@@ -79,5 +85,10 @@ export function displayOrder(q: Question, shuffle: (a: number[]) => number[]): n
       return shuffle(q.items.map((_, k) => k))
     case 'matching':
       return [0, 1, 2, 3]
+    case 'mapPick':
+      return []
   }
 }
+
+/** Питання, на які відповідають одним натиском — перевіряються одразу, без кнопки «Перевірити» */
+export const instantTypes: Question['type'][] = ['single', 'mapPick']

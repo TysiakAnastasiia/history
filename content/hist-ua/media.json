@@ -1,0 +1,80 @@
+[
+  {
+    "id": "t03-sofia",
+    "file": "t03/sofia.webp",
+    "title": "Софійський собор у Києві (перша половина XI ст.), сучасний вигляд",
+    "author": "Galvm",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Kyiv-Saint_Sophia_Cathedral-south-east_view.jpg"
+  },
+  {
+    "id": "t03-spas",
+    "file": "t03/spas.webp",
+    "title": "Спасо-Преображенський собор у Чернігові (1036), сучасний вигляд",
+    "author": "Nomad0212",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Transfiguration_Cathedral,_Chernihiv_5_september_2023.jpg"
+  },
+  {
+    "id": "t03-uspensky",
+    "file": "t03/uspensky.webp",
+    "title": "Успенський собор Києво-Печерської лаври (1073–1078; відбудований у 1998–2000), у центрі",
+    "author": "Daniel Kraft",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dormition_and_Refectory_Churches_Lavra.jpg"
+  },
+  {
+    "id": "t03-mykhailivsky",
+    "file": "t03/mykhailivsky.webp",
+    "title": "Михайлівський Золотоверхий собор у Києві (1108–1113; відбудований наприкінці 1990-х)",
+    "author": "Suicasmo",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:St._Michael%27s_Golden-Domed_Monastery_in_Kiev_20190505-3.jpg"
+  },
+  {
+    "id": "t03-pyatnytska",
+    "file": "t03/pyatnytska.webp",
+    "title": "П’ятницька церква в Чернігові (кінець XII — початок XIII ст.)",
+    "author": "Star61",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Pyatnytska_Church_(Chernihiv).jpg"
+  },
+  {
+    "id": "t03-vyshhorod",
+    "file": "t03/vyshhorod.webp",
+    "title": "Вишгородська ікона Богородиці (XII ст.)",
+    "author": "невідомий візантійський іконописець; фото — Michel Bakni",
+    "license": "Суспільне надбання",
+    "source": "https://commons.wikimedia.org/wiki/File:Virgin_of_Vladimir.jpg"
+  },
+  {
+    "id": "t03-svenska",
+    "file": "t03/svenska.webp",
+    "title": "Свенська ікона Богородиці з Антонієм і Феодосієм Печерськими",
+    "author": "невідомий іконописець (XIII ст.)",
+    "license": "Суспільне надбання",
+    "source": "https://commons.wikimedia.org/wiki/File:Pecherskaya_(Svenskaya)_with_SS.Antonius_and_Feodosius_(13_c,_Tretyakov_gallery).jpg"
+  },
+  {
+    "id": "t03-oranta",
+    "file": "t03/oranta.webp",
+    "title": "Мозаїка Богоматері Оранти в Софійському соборі (перша половина XI ст.)",
+    "author": "Sky-inyour-eyes",
+    "license": "CC0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source": "https://commons.wikimedia.org/wiki/File:Oranta_Sofia_of_Kyiv.jpg"
+  },
+  {
+    "id": "t03-luke",
+    "file": "t03/luke.webp",
+    "title": "Мініатюра «Євангеліст Лука» з Остромирового Євангелія (1056–1057)",
+    "author": "невідомий майстер (XI ст.)",
+    "license": "Суспільне надбання",
+    "source": "https://commons.wikimedia.org/wiki/File:Ostromir_luke.jpg"
+  }
+]

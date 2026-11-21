@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Explanation } from '../components/Explanation'
+import { QuestionMedia } from '../components/QuestionMedia'
 import { Mascot } from '../components/Mascot'
 import { QuestionView } from '../components/QuestionView'
 import { BackBar, Button, Card, LinkButton, Screen, Title } from '../components/ui'
@@ -173,6 +174,7 @@ function Running({
 
       <Card>
         <p className="text-muted mb-1 text-sm">{TYPE_LABEL[q.type]}</p>
+        <QuestionMedia q={q} revealed={false} />
         <h2 className="mb-4 text-xl leading-snug font-semibold">{q.prompt}</h2>
         <QuestionView
           key={q.id}
@@ -283,6 +285,7 @@ function Results({
               </span>
             </summary>
             <div className="mt-4 flex flex-col gap-4">
+              <QuestionMedia q={q} revealed />
               <QuestionView
                 q={q}
                 response={responses[k]}

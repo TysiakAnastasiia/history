@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { MAPS } from '../content'
 import type { Question } from '../lib/schema'
 import { LETTERS, type Response } from '../lib/scoring'
 
@@ -77,6 +78,22 @@ function Details({ q, response }: { q: Question; response: Response }) {
           </ul>
         </Block>
       )
+    case 'mapPick': {
+      const region = MAPS[q.layer]?.regions.find((r) => r.id === q.answer)
+      const pickedRegion = MAPS[q.layer]?.regions.find((r) => r.id === response)
+      return (
+        <Block title="На картосхемі">
+          <b className="font-semibold">{region?.name}</b>
+          {region?.note && ` — ${region.note}`}
+          {pickedRegion && pickedRegion.id !== q.answer && (
+            <span className="text-bad block">
+              Ви вибрали: {pickedRegion.name}
+              {pickedRegion.note && ` — ${pickedRegion.note}`}
+            </span>
+          )}
+        </Block>
+      )
+    }
     case 'sequence':
       return (
         <Block title="Правильний порядок">

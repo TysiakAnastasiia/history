@@ -1,5 +1,7 @@
 import type { Question } from '../lib/schema'
 import { LETTERS, type Response } from '../lib/scoring'
+import { MAPS } from '../content'
+import { MapView } from './MapView'
 import { Button } from './ui'
 
 interface Props {
@@ -138,6 +140,25 @@ export function QuestionView({ q, response, onChange, revealed, order }: Props) 
               </div>
             </div>
           ))}
+        </div>
+      )
+    }
+
+    case 'mapPick': {
+      const layer = MAPS[q.layer]
+      if (!layer) return null
+      return (
+        <div className="flex flex-col gap-2">
+          {!revealed && (
+            <p className="text-muted text-sm">Натисніть на потрібну область картосхеми.</p>
+          )}
+          <MapView
+            layer={layer}
+            mode="pick"
+            picked={typeof response === 'string' ? response : null}
+            answer={revealed ? q.answer : null}
+            onPick={(id) => onChange(id)}
+          />
         </div>
       )
     }

@@ -4,6 +4,7 @@ import { useProfile } from '../lib/profile'
 import type { Question } from '../lib/schema'
 import {
   displayOrder,
+  instantTypes,
   isComplete,
   maxPoints,
   score,
@@ -13,6 +14,7 @@ import {
 import { playResult } from '../lib/sound'
 import { rnd, shuffle } from '../lib/util'
 import { Explanation } from './Explanation'
+import { QuestionMedia } from './QuestionMedia'
 import { Mascot, type Mood } from './Mascot'
 import { QuestionView } from './QuestionView'
 import { Button, Card } from './ui'
@@ -83,7 +85,7 @@ export function Quiz({ questions, mode = 'learn', game, readMore = true, finish 
   )
 
   // Вибір одного варіанта перевіряється одразу; решта типів — кнопкою «Перевірити»
-  const change = (r: Response) => (q?.type === 'single' ? submit(r) : setResponse(r))
+  const change = (r: Response) => (q && instantTypes.includes(q.type) ? submit(r) : setResponse(r))
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -142,6 +144,7 @@ export function Quiz({ questions, mode = 'learn', game, readMore = true, finish 
           <Mascot key={`${i}-${mood}`} mood={mood} size={84} />
         </div>
         {q.type !== 'single' && <p className="text-muted mb-1 text-sm">{TYPE_LABEL[q.type]}</p>}
+        <QuestionMedia q={q} revealed={revealed} />
         <h2 className="mb-4 text-xl leading-snug font-semibold">{q.prompt}</h2>
         <QuestionView
           q={q}
@@ -152,7 +155,7 @@ export function Quiz({ questions, mode = 'learn', game, readMore = true, finish 
         />
       </Card>
 
-      {!revealed && q.type !== 'single' && (
+      {!revealed && !instantTypes.includes(q.type) && (
         <Button
           variant="primary"
           disabled={!isComplete(q, response)}

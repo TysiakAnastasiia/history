@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
+import { MapExplorer } from '../components/MapExplorer'
+import { MediaFigure } from '../components/MediaFigure'
 import { Quiz } from '../components/Quiz'
 import { BackBar, Button, Card, LinkButton, Screen } from '../components/ui'
 import { BY_ID, PACKS, topicTitle } from '../content'
@@ -54,6 +56,18 @@ function SectionView({ n, idx }: { n: number; idx: number }) {
                 <p key={k}>{p}</p>
               ))}
             </div>
+            {s.media && s.media.length > 0 && (
+              <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                {s.media.map((m) => (
+                  <MediaFigure key={m} id={m} />
+                ))}
+              </div>
+            )}
+            {s.maps && s.maps.length > 0 && (
+              <div className="mt-5">
+                <MapExplorer layers={s.maps} />
+              </div>
+            )}
             {s.remember && (
               <div className="bg-accent/15 border-accent mt-5 rounded-2xl border-l-4 p-4">
                 <div className="text-sm font-semibold">Запам’ятай</div>
