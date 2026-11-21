@@ -8,9 +8,9 @@ import type { Fact } from '../lib/schema'
 import { playResult } from '../lib/sound'
 import { shuffle } from '../lib/util'
 
-/** Картки на пам’ять: 15 секунд запам’ятати, потім знайти пари «дата + подія» */
+/** Картки на пам’ять: 30 секунд запам’ятати, потім знайти пари «дата + подія» */
 const PAIRS = 6
-const MEMORIZE = 15
+const MEMORIZE = 30
 const RECORD = 'memory'
 
 interface CardData {

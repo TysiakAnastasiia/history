@@ -5,13 +5,13 @@ import { Link } from 'react-router-dom'
 const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(' ')
 
 /** Обгортка екрана: ширина, відступи, плавна поява */
-export function Screen({ children }: { children: ReactNode }) {
+export function Screen({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   return (
     <motion.main
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="mx-auto flex w-full max-w-xl flex-col gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-12"
+      className={`mx-auto flex w-full flex-col gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-12 ${wide ? 'max-w-4xl' : 'max-w-xl'}`}
     >
       {children}
     </motion.main>
