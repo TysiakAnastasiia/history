@@ -98,15 +98,15 @@ npm run preview       # переглянути зібраний сайт: http:/
 
 ## Команди
 
-| Команда                | Що робить                                         |
-| ---------------------- | ------------------------------------------------- |
-| `npm run dev`          | сервер розробки з автооновленням                  |
-| `npm run validate`     | перевірка контенту за схемою                      |
-| `npm run build`        | перевірка контенту й TypeScript, збірка в `dist/` |
-| `npm run preview`      | локальний перегляд зібраної версії                |
-| `npm run lint`         | перевірка коду лінтером oxlint                    |
-| `npm run format`       | відформатувати всі файли Prettier'ом              |
-| `npm run format:check` | лише перевірити форматування                      |
+| Команда                | Що робить                                                                 |
+| ---------------------- | ------------------------------------------------------------------------- |
+| `npm run dev`          | сервер розробки з автооновленням                                          |
+| `npm run validate`     | перевірка контенту й оновлення покажчика тем (запускається і перед `dev`) |
+| `npm run build`        | перевірка контенту й TypeScript, збірка в `dist/`                         |
+| `npm run preview`      | локальний перегляд зібраної версії                                        |
+| `npm run lint`         | перевірка коду лінтером oxlint                                            |
+| `npm run format`       | відформатувати всі файли Prettier'ом                                      |
+| `npm run format:check` | лише перевірити форматування                                              |
 
 ## Структура
 
@@ -194,6 +194,28 @@ git push -u origin feature/назва
 4. Сайт з'явиться на `https://<логін>.github.io/history/`.
 
 Якщо репозиторій перейменовано, змініть `base` у [vite.config.ts](vite.config.ts) на `'/<нова-назва>/'`.
+
+## Резервна копія бази
+
+Workflow [.github/workflows/backup.yml](.github/workflows/backup.yml) щомісяця (1-го числа) робить копію бази Supabase: таблиці застосунку (`profiles`, `attempts`, `lesson_progress`, `favorites`) і акаунти. Копія **шифрується паролем**, бо в публічному репозиторії файли збірок може завантажити будь-хто з акаунтом GitHub. Зберігається 90 днів (останні 3 місяці).
+
+### Налаштування (один раз)
+
+1. Supabase → **Connect** → вкладка **Session pooler** → скопіювати **URI** і підставити пароль бази замість `[YOUR-PASSWORD]`.
+2. GitHub → **Settings → Secrets and variables → Actions → New repository secret**:
+   - `SUPABASE_DB_URL` — рядок із кроку 1;
+   - `BACKUP_PASSPHRASE` — довгий пароль для шифрування. **Збережіть його в менеджері паролів**: без нього копію не відкрити.
+3. **Actions → Database backup → Run workflow** — перевірити, що копія створюється.
+
+### Відновлення
+
+1. **Actions → Database backup** → потрібний запуск → завантажити артефакт `db-РРРР-ММ-ДД` і розпакувати zip.
+2. Розшифрувати й розпакувати:
+   ```bash
+   gpg -d db-РРРР-ММ-ДД.tar.gz.gpg > backup.tar.gz   # спитає пароль BACKUP_PASSPHRASE
+   mkdir backup && tar -xzf backup.tar.gz -C backup
+   ```
+3. Відновити в Supabase (SQL Editor або `psql`): спершу `auth.sql` (акаунти), потім `public.sql` (таблиці й прогрес).
 
 ## Типові проблеми
 

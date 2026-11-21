@@ -1,0 +1,62 @@
+# Щомісячна зашифрована резервна копія бази Supabase.
+# Потрібні секрети репозиторію (Settings → Secrets and variables → Actions):
+#   SUPABASE_DB_URL     — рядок підключення «Session pooler» з паролем бази
+#                         (Supabase → Connect → Session pooler → URI)
+#   BACKUP_PASSPHRASE   — пароль для шифрування копії (зберігайте в менеджері паролів!)
+# Відновлення — див. README, розділ «Резервна копія бази».
+name: Database backup
+
+on:
+  schedule:
+    - cron: '0 3 1 * *' # 1-го числа щомісяця, 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check secrets
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          if [ -z "$DB_URL" ] || [ -z "$PASSPHRASE" ]; then
+            echo "::error::Додайте секрети SUPABASE_DB_URL і BACKUP_PASSPHRASE"
+            exit 1
+          fi
+
+      - name: Dump database
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          mkdir -p backup
+          # pg_dump з офіційного образу Postgres (версія не нижча за версію сервера)
+          dump() { docker run --rm -e DB_URL postgres:17 sh -c "pg_dump \"\$DB_URL\" $*"; }
+          # Таблиці застосунку: схема й дані
+          dump --schema=public --no-owner --no-privileges > backup/public.sql
+          # Акаунти (лише дані) — щоб прогрес можна було прив’язати до користувачів після відновлення
+          dump --data-only --table=auth.users --table=auth.identities > backup/auth.sql \
+            || echo "::warning::Не вдалося зберегти auth-таблиці, копія містить лише дані застосунку"
+          ls -la backup
+          test -s backup/public.sql
+
+      - name: Compress and encrypt
+        env:
+          PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          name="db-$(date -u +%Y-%m-%d)"
+          tar -czf "$name.tar.gz" -C backup .
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$PASSPHRASE" \
+            --symmetric --cipher-algo AES256 -o "$name.tar.gz.gpg" "$name.tar.gz"
+          rm -rf backup "$name.tar.gz"
+          echo "BACKUP_NAME=$name" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.BACKUP_NAME }}
+          path: ${{ env.BACKUP_NAME }}.tar.gz.gpg
+          retention-days: 90
+          if-no-files-found: error
