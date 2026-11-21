@@ -70,19 +70,21 @@ function Round({
   const { profile, update } = useProfile()
   const hints = person.hints!
   const [shown, setShown] = useState(1)
-  const [picked, setPicked] = useState<string | null>(null)
+  /** неправильні варіанти, які вже вибирали (закреслені) */
+  const [wrong, setWrong] = useState<string[]>([])
+  const [result, setResult] = useState<'won' | 'lost' | null>(null)
   const [gained, setGained] = useState(0)
   const [options] = useState(() =>
     shuffle([person, ...shuffle(all.filter((p) => p.id !== person.id)).slice(0, OPTIONS - 1)]),
   )
   const record = profile.gameRecords[RECORD]
-  const points = hints.length - shown + 1
-  const won = picked === person.id
+  // бали: мінус один за кожну додаткову підказку й за кожну помилку
+  const points = Math.max(1, hints.length - (shown - 1) - wrong.length)
+  const won = result === 'won'
+  const over = result !== null
 
-  const pick = (id: string) => {
-    if (picked) return
-    setPicked(id)
-    const ok = id === person.id
+  const finish = (ok: boolean) => {
+    setResult(ok ? 'won' : 'lost')
     playResult(ok, profile.sound)
     const xp = ok ? points * 3 : 0
     setGained(xp)
@@ -94,7 +96,19 @@ function Round({
         [RECORD]: Math.max(p.gameRecords[RECORD] ?? 0, ok ? streak + 1 : 0),
       },
     }))
-    if (!ok) setShown(hints.length) // після помилки показуємо всі підказки
+    if (!ok) setShown(hints.length)
+  }
+
+  const pick = (id: string) => {
+    if (over || wrong.includes(id)) return
+    if (id === person.id) return finish(true)
+    // помилка: варіант закреслюємо й відкриваємо наступну підказку;
+    // якщо лишилося менше двох варіантів — раунд програно
+    const nextWrong = [...wrong, id]
+    setWrong(nextWrong)
+    setShown((s) => Math.min(hints.length, s + 1))
+    if (options.length - nextWrong.length < 2) finish(false)
+    else playResult(false, profile.sound)
   }
 
   return (
@@ -105,7 +119,7 @@ function Round({
       </BackBar>
       <div className="flex items-end justify-between gap-4">
         <Title>Хто я?</Title>
-        {!picked && (
+        {!over && (
           <span className="text-muted pb-2 text-sm">
             {points} {points === 1 ? 'бал' : points < 5 ? 'бали' : 'балів'}
           </span>
@@ -128,7 +142,7 @@ function Round({
         </AnimatePresence>
       </ol>
 
-      {!picked && shown < hints.length && (
+      {!over && shown < hints.length && (
         <button
           onClick={() => setShown((s) => s + 1)}
           className="text-muted hover:text-fg self-start text-sm underline-offset-4 transition hover:underline"
@@ -140,18 +154,19 @@ function Round({
       <div className="mt-2 grid grid-cols-2 gap-2.5">
         {options.map((o) => {
           const isRight = o.id === person.id
-          const variant = !picked
-            ? 'glass hover:border-fg/25'
-            : isRight
-              ? 'border-accent bg-accent/15'
-              : o.id === picked
-                ? 'border-bad bg-bad/12'
+          const isWrong = wrong.includes(o.id)
+          const variant = isWrong
+            ? 'border-bad bg-bad/12 line-through opacity-60'
+            : !over
+              ? 'glass hover:border-fg/25'
+              : isRight
+                ? 'border-accent bg-accent/15'
                 : 'border-line opacity-50'
           return (
             <button
               key={o.id}
               onClick={() => pick(o.id)}
-              disabled={!!picked}
+              disabled={over || isWrong}
               className={`focus-visible:outline-fg flex min-h-14 items-center justify-center rounded-2xl border px-3 py-3 text-center font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 ${variant}`}
             >
               {personName(o.title)}
@@ -160,7 +175,14 @@ function Round({
         })}
       </div>
 
-      {picked && (
+      {!over && wrong.length > 0 && (
+        <p className="text-bad text-center text-sm" aria-live="polite">
+          Ні, не {personName(options.find((o) => o.id === wrong[wrong.length - 1])!.title)}. Ось ще
+          підказка.
+        </p>
+      )}
+
+      {over && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
