@@ -11,6 +11,7 @@ import {
   mediaFile,
   programFile,
   questionsFile,
+  quotesFile,
   theoryFile,
   topicsFile,
   type TopicPack,
@@ -47,6 +48,7 @@ const packs: TopicPack[] = readdirSync(ROOT, { withFileTypes: true })
     theory: load(`${d.name}/theory.json`, theoryFile, []),
     questions: load(`${d.name}/questions.json`, questionsFile, []),
     maps: load(`${d.name}/maps.json`, mapsFile, []),
+    quotes: load(`${d.name}/quotes.json`, quotesFile, []),
   }))
 const media = load('media.json', mediaFile, [])
 for (const m of media)

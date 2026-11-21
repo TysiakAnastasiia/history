@@ -32,6 +32,18 @@ export const funFactSchema = z.object({
   status,
 })
 
+/** Цитата для гри «Хто це сказав?» */
+export const quoteSchema = z.object({
+  id,
+  text,
+  /** хто сказав чи написав (ім’я або опис: «Древляни», «Автор «Слова о полку Ігоревім»») */
+  author: text,
+  /** пояснення: коли, кому й чому це сказано */
+  context: text,
+  source: text,
+  status,
+})
+
 /** Зображення з відкритих джерел; автор і ліцензія показуються під ним */
 export const mediaSchema = z.object({
   id,
@@ -162,6 +174,7 @@ export const funFactsFile = z.array(funFactSchema)
 export const theoryFile = z.array(sectionSchema)
 export const questionsFile = z.array(questionSchema)
 export const mediaFile = z.array(mediaSchema)
+export const quotesFile = z.array(quoteSchema)
 export const mapsFile = z.array(mapLayerSchema)
 
 export type Topic = z.infer<typeof topicSchema>
@@ -171,6 +184,7 @@ export type Section = z.infer<typeof sectionSchema>
 export type Question = z.infer<typeof questionSchema>
 export type SingleQuestion = Extract<Question, { type: 'single' }>
 export type Media = z.infer<typeof mediaSchema>
+export type Quote = z.infer<typeof quoteSchema>
 export type MapLayer = z.infer<typeof mapLayerSchema>
 export type LonLat = [number, number]
 
@@ -181,6 +195,7 @@ export interface TopicPack {
   theory: Section[]
   questions: Question[]
   maps: MapLayer[]
+  quotes: Quote[]
 }
 
 /** Перевірки, які не виражаються схемою: унікальні id і посилання між файлами. */
@@ -206,6 +221,7 @@ export function crossCheck(packs: TopicPack[], media: Media[] = []): string[] {
     p.facts.forEach((f) => unique(where, f.id))
     p.funFacts.forEach((f) => unique(where, f.id))
     p.questions.forEach((q) => unique(where, q.id))
+    p.quotes.forEach((q) => unique(where, q.id))
     p.maps.forEach((l) => unique(where, l.id))
     for (const l of p.maps) {
       const inner = new Set<string>()

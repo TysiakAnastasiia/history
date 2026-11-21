@@ -7,17 +7,11 @@ import { useProfile } from '../lib/profile'
 import type { Fact } from '../lib/schema'
 import { playResult } from '../lib/sound'
 import { shuffle } from '../lib/util'
+import { personName } from './facts'
 
 /** «Хто я?»: вгадати діяча за підказками, що відкриваються по одній */
 const RECORD = 'whoami' // найдовша серія вгаданих поспіль
 const OPTIONS = 4
-
-/** Ім’я без посади й прізвиська в дужках («Літописець Нестор» → «Нестор»), щоб варіант не підказував відповідь */
-const personName = (title: string) =>
-  title
-    .replace(/^(Митрополит|Іконописець|Літописець|Князь|Княгиня)\s+/i, '')
-    .replace(/\s*\([^)]*\)/g, '')
-    .trim()
 
 const withHints = (f: Fact) => f.kind === 'person' && (f.hints?.length ?? 0) >= 3
 

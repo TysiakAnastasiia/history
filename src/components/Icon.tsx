@@ -9,6 +9,12 @@ const PATHS = {
   games:
     'M6 12h4M8 10v4M15 13h.01M18 11h.01M17.3 5H6.7a4 4 0 0 0-4 3.6L2 15a3 3 0 0 0 5.4 2.2L9 15h6l1.6 2.2A3 3 0 0 0 22 15l-.7-6.4A4 4 0 0 0 17.3 5z',
   arrow: 'M5 12h14M13 6l6 6-6 6',
+  map: 'M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4zM9 4v13M15 6.5v13',
+  quote: 'M7 7h4v4c0 3-1.5 5-4 6M15 7h4v4c0 3-1.5 5-4 6',
+  gap: 'M4 12h3M17 12h3M9 9h6v6H9z',
+  grid: 'M4 4h6v6H4zM10 4h6v6h-6zM10 10h6v6h-6zM10 16h6v4h-6zM16 10h4v6h-4z',
+  anchor: 'M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM12 8v13M5 13a7 7 0 0 0 14 0M8 11h8',
+  castle: 'M4 21V8h3v3h3V8h4v3h3V8h3v13zM10 21v-5a2 2 0 0 1 4 0v5',
   person: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0M17 4.5a2.5 2.5 0 0 1 1.5 4.3',
   timeline: 'M4 6h3M4 12h3M4 18h3M11 6h9M11 12h6M11 18h8M7 6v12',
   cards:

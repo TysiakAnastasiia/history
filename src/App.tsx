@@ -2,14 +2,21 @@ import { MotionConfig } from 'motion/react'
 import { Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Loading } from './components/Loading'
+import { Battleship } from './games/Battleship'
 import { Chronology } from './games/Chronology'
+import { Crossword } from './games/Crossword'
+import { FillGap } from './games/FillGap'
+import { Fortress } from './games/Fortress'
 import { Hangman } from './games/Hangman'
+import { Journey } from './games/Journey'
 import { WhoAmI } from './games/WhoAmI'
+import { WhoSaid } from './games/WhoSaid'
 import { Memory } from './games/Memory'
 import { useProfile } from './lib/profile'
 import { Blitz } from './screens/Blitz'
 import { Exam } from './screens/Exam'
 import { Facts } from './screens/Facts'
+import { Games } from './screens/Games'
 import { Home } from './screens/Home'
 import { Mistakes } from './screens/Mistakes'
 import { Mix } from './screens/Mix'
@@ -45,6 +52,13 @@ export default function App() {
           <Route path="/games/hangman" element={<Hangman />} />
           <Route path="/games/chronology" element={<Chronology />} />
           <Route path="/games/whoami" element={<WhoAmI />} />
+          <Route path="/games" element={<Games />} />
+          <Route path="/games/fillgap" element={<FillGap />} />
+          <Route path="/games/crossword" element={<Crossword />} />
+          <Route path="/games/battleship" element={<Battleship />} />
+          <Route path="/games/fortress" element={<Fortress />} />
+          <Route path="/games/whosaid" element={<WhoSaid />} />
+          <Route path="/games/journey" element={<Journey />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

@@ -20,3 +20,10 @@ export function eventsWithDistinctYears(facts: Fact[]): Fact[] {
     if (!byYear.has(f.year!)) byYear.set(f.year!, f)
   return shuffle([...byYear.values()])
 }
+
+/** Ім’я без посади й прізвиська в дужках («Літописець Нестор» → «Нестор»), щоб варіант не підказував відповідь */
+export const personName = (title: string) =>
+  title
+    .replace(/^(Митрополит|Іконописець|Літописець|Князь|Княгиня)\s+/i, '')
+    .replace(/\s*\([^)]*\)/g, '')
+    .trim()

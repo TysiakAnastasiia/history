@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Icon } from '../components/Icon'
+import { GAMES_COUNT } from './Games'
 import { Mascot } from '../components/Mascot'
 import { useAuth } from '../lib/auth'
 import { factOfDay, hasTopic, topicOf } from '../content'
@@ -80,41 +81,14 @@ export function Home() {
         </Link>
       )}
       <SectionTitle>Ігри</SectionTitle>
-      <LinkButton to="/games/memory">
-        <Icon name="cards" /> Картки на пам’ять
-        <Aside>
-          {profile.gameRecords.memory !== undefined
-            ? `рекорд: ${profile.gameRecords.memory} помилок`
-            : 'дата + подія'}
-        </Aside>
+      <LinkButton to="/games/journey">
+        <Icon name="map" /> Подорож епохами
+        <Aside>шлях і боси епох</Aside>
       </LinkButton>
-      <LinkButton to="/games/chronology">
-        <Icon name="timeline" /> Хронологія
-        <Aside>
-          {profile.gameRecords.chronology
-            ? `рекорд серії: ${profile.gameRecords.chronology}`
-            : 'події по порядку'}
-        </Aside>
+      <LinkButton to="/games">
+        <Icon name="games" /> Усі ігри
+        <Aside>{GAMES_COUNT}</Aside>
       </LinkButton>
-      <LinkButton to="/games/whoami">
-        <Icon name="person" /> Хто я?
-        <Aside>
-          {profile.gameRecords.whoami
-            ? `рекорд серії: ${profile.gameRecords.whoami}`
-            : 'діяч за підказками'}
-        </Aside>
-      </LinkButton>
-      <LinkButton to="/games/hangman">
-        <Icon name="letters" /> Шибениця
-        <Aside>
-          {profile.gameRecords.hangman ? `рекорд серії: ${profile.gameRecords.hangman}` : 'терміни'}
-        </Aside>
-      </LinkButton>
-      <Button disabled className="opacity-60">
-        <Icon name="games" />
-        <span>Кросворд · Морський бій · Захист фортеці</span>
-        <Aside>скоро</Aside>
-      </Button>
 
       <SectionTitle>Налаштування</SectionTitle>
       <Toggle label="Звук" checked={profile.sound} onChange={(v) => set('sound', v)} />

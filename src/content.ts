@@ -7,6 +7,7 @@ import {
   mapsFile,
   mediaFile,
   questionsFile,
+  quotesFile,
   theoryFile,
   topicsFile,
   type MapLayer,
@@ -63,6 +64,7 @@ const lazy: Record<string, Loader> = import.meta.glob(
     '../content/hist-ua/topic-*/theory.json',
     '../content/hist-ua/topic-*/questions.json',
     '../content/hist-ua/topic-*/maps.json',
+    '../content/hist-ua/topic-*/quotes.json',
   ],
   { import: 'default' },
 )
@@ -85,7 +87,8 @@ export function loadPack(n: number): Promise<TopicPack> {
       fileOf(n, 'theory'),
       fileOf(n, 'questions'),
       fileOf(n, 'maps'),
-    ]).then(([facts, theory, questions, maps]) => {
+      fileOf(n, 'quotes'),
+    ]).then(([facts, theory, questions, maps, quotes]) => {
       const pack: TopicPack = {
         topic: n,
         facts: factsFile.parse(facts),
@@ -93,6 +96,7 @@ export function loadPack(n: number): Promise<TopicPack> {
         theory: theoryFile.parse(theory),
         questions: questionsFile.parse(questions),
         maps: mapsFile.parse(maps),
+        quotes: quotesFile.parse(quotes),
       }
       for (const q of pack.questions) BY_ID[q.id] = q
       for (const l of pack.maps) MAPS[l.id] = l
