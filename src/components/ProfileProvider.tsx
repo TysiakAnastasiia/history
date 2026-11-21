@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ProfileContext } from '../lib/profile'
+import { Loading } from './Loading'
 import { DEFAULT_PROFILE, localStore, type Profile, type Store } from '../lib/storage'
 
 export function ProfileProvider({
@@ -20,9 +21,27 @@ export function ProfileProvider({
     })
   }, [store])
 
+  // Збереження з невеликою затримкою: кілька швидких змін — один запит до бази
   useEffect(() => {
-    if (loaded) void store.save(profile)
+    if (!loaded) return
+    const t = setTimeout(() => void store.save(profile), 400)
+    return () => clearTimeout(t)
   }, [profile, loaded, store])
+
+  // Перед виходом з акаунта чи закриттям вкладки — зберегти останні зміни одразу
+  const latest = useRef(profile)
+  useEffect(() => {
+    latest.current = profile
+  }, [profile])
+  useEffect(() => {
+    const flush = () => loaded && void store.save(latest.current)
+    const onHide = () => document.visibilityState === 'hidden' && flush()
+    document.addEventListener('visibilitychange', onHide)
+    return () => {
+      document.removeEventListener('visibilitychange', onHide)
+      flush()
+    }
+  }, [loaded, store])
 
   // Налаштування, що впливають на весь документ
   useEffect(() => {
@@ -57,5 +76,6 @@ export function ProfileProvider({
     () => ({ profile, update, answer, streak }),
     [profile, update, answer, streak],
   )
+  if (!loaded) return <Loading />
   return <ProfileContext value={value}>{children}</ProfileContext>
 }

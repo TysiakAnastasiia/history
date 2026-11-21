@@ -7,6 +7,7 @@ export default defineConfig({
   // Назва репозиторію: сайт живе на https://<логін>.github.io/history/
   base: '/history/',
   plugins: [react(), tailwindcss()],
-  // React + Motion + Zod + Router разом ~165 КБ у gzip — для застосунку це норма
-  build: { chunkSizeWarningLimit: 700 },
+  // Головний файл: React + Motion + Zod + Router + контент тем (~215 КБ у gzip).
+  // TODO етап 5: вантажити контент по темах, інакше 32 теми роздують бандл.
+  build: { chunkSizeWarningLimit: 1000 },
 })

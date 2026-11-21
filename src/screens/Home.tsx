@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Mascot } from '../components/Mascot'
+import { useAuth } from '../lib/auth'
 import { BY_ID, factOfDay } from '../content'
 import { RankBar } from '../components/RankBar'
 import { Aside, Button, LinkButton, Screen, SectionTitle, Title, Toggle } from '../components/ui'
@@ -14,6 +17,8 @@ const THEMES: { value: Theme; label: string }[] = [
 
 export function Home() {
   const { profile, update } = useProfile()
+  const { email, signOut } = useAuth()
+  const [askOut, setAskOut] = useState(false)
   const set = <K extends keyof Profile>(k: K, v: Profile[K]) => update((p) => ({ ...p, [k]: v }))
   const themeIdx = Math.max(
     0,
@@ -86,9 +91,35 @@ export function Home() {
         Тема
         <span className="ml-auto font-semibold">{THEMES[themeIdx].label}</span>
       </Button>
+      <SectionTitle>Акаунт</SectionTitle>
+      {email ? (
+        <Button onClick={() => setAskOut(true)}>
+          <span className="min-w-0 truncate">{email}</span>
+          <span className="text-bad ml-auto shrink-0 font-semibold">Вийти</span>
+        </Button>
+      ) : (
+        <p className="text-muted text-sm">
+          Локальний режим: ключі Supabase не задані, прогрес зберігається лише в цьому браузері.
+        </p>
+      )}
+
       <p className="text-muted mt-2 text-sm">
         Найдовша серія: {profile.bestStreak} · Клавіші 1–4 — відповідь, Enter — далі
       </p>
+
+      <ConfirmDialog
+        open={askOut}
+        title="Вийти з акаунта?"
+        confirmLabel="Вийти"
+        cancelLabel="Залишитися"
+        onConfirm={() => {
+          setAskOut(false)
+          void signOut()
+        }}
+        onCancel={() => setAskOut(false)}
+      >
+        Прогрес збережено в хмарі — після входу він повернеться.
+      </ConfirmDialog>
     </Screen>
   )
 }
