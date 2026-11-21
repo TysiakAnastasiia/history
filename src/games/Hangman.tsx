@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { use, useCallback, useEffect, useMemo, useState } from 'react'
+import { use, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Mascot } from '../components/Mascot'
 import { BackBar, Button, Card, LinkButton, Screen, Title } from '../components/ui'
 import { loadAll } from '../content'
@@ -124,7 +124,7 @@ function Word({
           </Card>
 
           <div className="flex justify-center sm:hidden">
-            <Gallows stage={mistakes} className="h-52 w-52" />
+            <Gallows stage={mistakes} won={won} lost={lost} className="h-56 w-56" />
           </div>
 
           {/* слово */}
@@ -207,23 +207,79 @@ function Word({
           )}
         </div>
         <div className="glass hidden w-[40%] shrink-0 items-center justify-center p-6 sm:flex">
-          <Gallows stage={mistakes} className="h-auto w-full max-w-sm" />
+          <Gallows stage={mistakes} won={won} lost={lost} className="h-auto w-full max-w-sm" />
         </div>
       </div>
     </Screen>
   )
 }
 
-/** Мінімалістична шибениця: з кожною помилкою з’являється ще одна частина */
-function Gallows({ stage, className = '' }: { stage: number; className?: string }) {
+/**
+ * Шибениця з деталями: чоловічок-козак (оселедець, вуса, пояс, шабля),
+ * ворона, що прилітає на перекладину, брови й піт від хвилювання,
+ * хрестики замість очей у разі програшу й усмішка-очі у разі перемоги.
+ */
+function Gallows({
+  stage,
+  won = false,
+  lost = false,
+  className = '',
+}: {
+  stage: number
+  won?: boolean
+  lost?: boolean
+  className?: string
+}) {
+  const appear = (key: string, el: ReactNode) => (
+    <motion.g
+      key={key}
+      initial={{ opacity: 0, scale: 0.7 }}
+      animate={{ opacity: 1, scale: 1 }}
+      style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
+    >
+      {el}
+    </motion.g>
+  )
   const parts = [
-    <circle key="head" cx="70" cy="34" r="9" />,
-    <line key="body" x1="70" y1="43" x2="70" y2="68" />,
-    <line key="arm1" x1="70" y1="50" x2="60" y2="60" />,
+    // 1. голова з оселедцем і вусами
+    <g key="head">
+      <circle cx="70" cy="34" r="9" />
+      <path d="M70 25 Q62 19 60 27" />
+      <path d="M70 38.5 Q66 37.5 63.5 41 M70 38.5 Q74 37.5 76.5 41" strokeWidth="1.6" />
+    </g>,
+    // 2. тулуб із поясом
+    <g key="body">
+      <line x1="70" y1="43" x2="70" y2="68" />
+      <line x1="66" y1="58" x2="74" y2="58" className="text-accent" strokeWidth="3" />
+    </g>,
+    // 3. рука з шаблею
+    <g key="arm1">
+      <line x1="70" y1="50" x2="60" y2="60" />
+      <path d="M60 60 Q52 57 50 47" strokeWidth="1.4" className="text-muted" />
+    </g>,
     <line key="arm2" x1="70" y1="50" x2="80" y2="60" />,
     <line key="leg1" x1="70" y1="68" x2="61" y2="82" />,
     <line key="leg2" x1="70" y1="68" x2="79" y2="82" />,
   ]
+
+  // очі: звичайні → усміхнені (перемога) → хрестики (програш)
+  const eyes = lost ? (
+    <g strokeWidth="1.4">
+      <path d="M64.5 31.5 L67.5 34.5 M67.5 31.5 L64.5 34.5" />
+      <path d="M72.5 31.5 L75.5 34.5 M75.5 31.5 L72.5 34.5" />
+    </g>
+  ) : won ? (
+    <g strokeWidth="1.4">
+      <path d="M64.5 34 Q66 31.5 67.5 34" />
+      <path d="M72.5 34 Q74 31.5 75.5 34" />
+    </g>
+  ) : (
+    <g fill="currentColor" stroke="none">
+      <circle cx="66" cy="33" r="1.2" />
+      <circle cx="74" cy="33" r="1.2" />
+    </g>
+  )
+
   return (
     <svg
       viewBox="0 0 100 100"
@@ -231,21 +287,63 @@ function Gallows({ stage, className = '' }: { stage: number; className?: string 
       stroke="currentColor"
       strokeWidth="2.2"
       strokeLinecap="round"
+      strokeLinejoin="round"
       aria-label={`Помилок: ${stage}`}
       className={`shrink-0 ${className}`}
     >
+      {/* шибениця: основа з травою, стовп, перекладина з підпорою, мотузка */}
       <g className="text-muted">
         <line x1="12" y1="94" x2="60" y2="94" />
+        <path
+          d="M15 94 l-2 -4 M17 94 l0 -5 M19 94 l2 -4 M50 94 l-2 -3 M52 94 l1 -4"
+          strokeWidth="1.2"
+        />
         <line x1="28" y1="94" x2="28" y2="10" />
         <line x1="28" y1="10" x2="70" y2="10" />
-        <line x1="70" y1="10" x2="70" y2="25" />
+        <line x1="28" y1="24" x2="42" y2="10" strokeWidth="1.6" />
+        <line x1="70" y1="10" x2="70" y2="25" strokeWidth="1.4" />
       </g>
-      <g className="text-bad">
-        {parts.slice(0, stage).map((p) => (
-          <motion.g key={p.key} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            {p}
-          </motion.g>
-        ))}
+
+      {/* ворона прилітає після третьої помилки й поглядає вниз */}
+      {stage >= 3 && (
+        <motion.g
+          className="text-fg"
+          fill="currentColor"
+          stroke="none"
+          initial={{ opacity: 0, x: -14, y: -8 }}
+          animate={{ opacity: 1, x: 0, y: 0, rotate: lost ? 0 : [0, -8, 0] }}
+          transition={{
+            duration: 0.6,
+            rotate: { duration: 1.6, repeat: Infinity, repeatDelay: 1.2 },
+          }}
+          style={{ transformBox: 'fill-box', transformOrigin: 'bottom' }}
+        >
+          <ellipse cx="46" cy="7" rx="4.2" ry="2.6" />
+          <circle cx="50.2" cy="5" r="1.9" />
+          <path d="M51.8 4.6 L54.4 5.4 L51.8 6 Z" />
+          <path d="M42 7 L38.5 5.2 L39 8.6 Z" />
+          <line x1="45" y1="9.4" x2="45" y2="10" stroke="currentColor" strokeWidth="0.8" />
+          <line x1="47" y1="9.4" x2="47" y2="10" stroke="currentColor" strokeWidth="0.8" />
+        </motion.g>
+      )}
+
+      <g className={won ? 'text-accent' : 'text-bad'}>
+        {parts.slice(0, stage).map((p) => appear(String(p.key), p))}
+        {stage >= 1 && eyes}
+        {/* брови хвилювання — після четвертої помилки */}
+        {stage >= 4 && !won && (
+          <path d="M63.5 29.5 L67.5 30.5 M76.5 29.5 L72.5 30.5" strokeWidth="1.3" />
+        )}
+        {/* піт — після п’ятої */}
+        {stage >= 5 && !lost && !won && (
+          <motion.path
+            d="M82 27 Q80 31 82 32 Q84 31 82 27 Z"
+            fill="var(--map-water)"
+            stroke="none"
+            animate={{ y: [0, 4, 0], opacity: [1, 0.4, 1] }}
+            transition={{ duration: 1.4, repeat: Infinity }}
+          />
+        )}
       </g>
     </svg>
   )
