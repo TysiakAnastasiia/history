@@ -7,6 +7,7 @@ import { useProfile } from '../lib/profile'
 import type { Fact } from '../lib/schema'
 import { playResult } from '../lib/sound'
 import { shuffle } from '../lib/util'
+import { eventsWithDistinctYears, noYears } from './facts'
 
 /** Картки на пам’ять: 30 секунд запам’ятати, потім знайти пари «дата + подія» */
 const PAIRS = 6
@@ -20,21 +21,9 @@ interface CardData {
   text: string
 }
 
-/** Назва події без років у дужках, щоб картка не підказувала відповідь */
-const noYears = (title: string) =>
-  title
-    .replace(/\s*\([^)]*\d{3,4}[^)]*\)/g, '')
-    .replace(/\s{2,}/g, ' ')
-    .trim()
-
-/** Події з роками, де після прибирання дужок у тексті не лишилося дат */
-const playable = (f: Fact) => f.kind === 'event' && !!f.year && !/\d{3,4}/.test(noYears(f.title))
-
 /** Лише по одній події на рік, щоб пари не були двозначними */
 function pickPairs(facts: Fact[]): CardData[] {
-  const byYear = new Map<number, Fact>()
-  for (const f of shuffle(facts.filter(playable))) if (!byYear.has(f.year!)) byYear.set(f.year!, f)
-  const chosen = shuffle([...byYear.values()]).slice(0, PAIRS)
+  const chosen = eventsWithDistinctYears(facts).slice(0, PAIRS)
   return shuffle(
     chosen.flatMap((f) => [
       { key: `${f.id}-y`, pair: f.id, kind: 'year' as const, text: String(f.year) },
@@ -48,7 +37,7 @@ type Phase = 'memorize' | 'play' | 'done'
 export function Memory() {
   const facts = use(loadAll()).flatMap((p) => p.facts)
   const [round, setRound] = useState(0)
-  const enough = new Set(facts.filter(playable).map((f) => f.year)).size
+  const enough = eventsWithDistinctYears(facts).length
   if (enough < PAIRS)
     return (
       <Screen>

@@ -88,6 +88,14 @@ export function Home() {
             : 'дата + подія'}
         </Aside>
       </LinkButton>
+      <LinkButton to="/games/chronology">
+        <Icon name="timeline" /> Хронологія
+        <Aside>
+          {profile.gameRecords.chronology
+            ? `рекорд серії: ${profile.gameRecords.chronology}`
+            : 'події по порядку'}
+        </Aside>
+      </LinkButton>
       <LinkButton to="/games/hangman">
         <Icon name="letters" /> Шибениця
         <Aside>
@@ -96,7 +104,7 @@ export function Home() {
       </LinkButton>
       <Button disabled className="opacity-60">
         <Icon name="games" />
-        <span>Хронологія · Хто я? · Морський бій</span>
+        <span>Хто я? · Кросворд · Морський бій</span>
         <Aside>скоро</Aside>
       </Button>
 

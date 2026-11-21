@@ -2,6 +2,7 @@ import { MotionConfig } from 'motion/react'
 import { Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Loading } from './components/Loading'
+import { Chronology } from './games/Chronology'
 import { Hangman } from './games/Hangman'
 import { Memory } from './games/Memory'
 import { useProfile } from './lib/profile'
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/facts" element={<Facts />} />
           <Route path="/games/memory" element={<Memory />} />
           <Route path="/games/hangman" element={<Hangman />} />
+          <Route path="/games/chronology" element={<Chronology />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
