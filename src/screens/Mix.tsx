@@ -1,16 +1,17 @@
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { Quiz } from '../components/Quiz'
 import { BackBar, Button, LinkButton, Screen } from '../components/ui'
-import { QUESTIONS } from '../content'
+import { loadAll } from '../content'
 import { shuffle } from '../lib/util'
 
 const ROUND = 15
 
 /** Міксований режим: випадкові питання з усіх тем і всіх типів, з поясненнями */
 export function Mix() {
+  const all = use(loadAll()).flatMap((p) => p.questions)
   const [round, setRound] = useState(() => ({
     n: 0,
-    questions: shuffle(QUESTIONS).slice(0, ROUND),
+    questions: shuffle(all).slice(0, ROUND),
   }))
   return (
     <Screen>
@@ -24,7 +25,7 @@ export function Mix() {
             <Button
               variant="primary"
               onClick={() =>
-                setRound((r) => ({ n: r.n + 1, questions: shuffle(QUESTIONS).slice(0, ROUND) }))
+                setRound((r) => ({ n: r.n + 1, questions: shuffle(all).slice(0, ROUND) }))
               }
             >
               Ще раунд

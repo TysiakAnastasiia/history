@@ -1,13 +1,14 @@
+import { use } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import { Aside, BackBar, LinkButton, ProgressBar, Screen, Title } from '../components/ui'
-import { PACKS, topicTitle } from '../content'
+import { hasTopic, loadPack, topicTitle } from '../content'
 import { useProfile } from '../lib/profile'
 
 export function Topic() {
   const n = Number(useParams().n)
-  const pack = PACKS[n]
   const { profile } = useProfile()
-  if (!pack) return <Navigate to="/topics" replace />
+  if (!hasTopic(n)) return <Navigate to="/topics" replace />
+  const pack = use(loadPack(n))
 
   const read = pack.theory.filter((s) => profile.read.includes(s.id)).length
   const mistakes = pack.questions.filter((q) => profile.mistakes.includes(q.id)).length

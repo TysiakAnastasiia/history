@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { Quiz } from '../components/Quiz'
 import { BackBar, LinkButton, Screen } from '../components/ui'
-import { PACKS, topicTitle } from '../content'
+import { hasTopic, loadPack, topicTitle } from '../content'
+import type { TopicPack } from '../lib/schema'
 import { useProfile } from '../lib/profile'
 import { shuffle } from '../lib/util'
 
@@ -11,19 +12,23 @@ const ROUND = 20
 
 export function TopicQuiz() {
   const n = Number(useParams().n)
+  if (!hasTopic(n)) return <Navigate to="/topics" replace />
+  return <TopicQuizRound pack={use(loadPack(n))} />
+}
+
+function TopicQuizRound({ pack }: { pack: TopicPack }) {
+  const n = pack.topic
   const onlyMistakes = useSearchParams()[0].has('mistakes')
   const { profile } = useProfile()
-  const pack = PACKS[n]
 
   // Набір питань фіксується на старті; інакше «помилки» змінювалися б після кожної відповіді
   const [questions] = useState(() => {
     const pool = shuffle(
-      (pack?.questions ?? []).filter((q) => !onlyMistakes || profile.mistakes.includes(q.id)),
+      pack.questions.filter((q) => !onlyMistakes || profile.mistakes.includes(q.id)),
     )
     // Тренування — раунди по ROUND випадкових питань; помилки — усі одразу
     return onlyMistakes ? pool : pool.slice(0, ROUND)
   })
-  if (!pack) return <Navigate to="/topics" replace />
 
   return (
     <Screen>

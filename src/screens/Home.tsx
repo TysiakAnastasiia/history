@@ -4,7 +4,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Icon } from '../components/Icon'
 import { Mascot } from '../components/Mascot'
 import { useAuth } from '../lib/auth'
-import { BY_ID, factOfDay } from '../content'
+import { factOfDay, hasTopic, topicOf } from '../content'
 import { RankBar } from '../components/RankBar'
 import { Aside, Button, LinkButton, Screen, SectionTitle, Title, Toggle } from '../components/ui'
 import { useProfile } from '../lib/profile'
@@ -27,7 +27,7 @@ export function Home() {
   )
 
   const fact = factOfDay()
-  const mistakes = profile.mistakes.filter((id) => BY_ID[id]).length
+  const mistakes = profile.mistakes.filter((id) => hasTopic(topicOf(id))).length
 
   return (
     <Screen>

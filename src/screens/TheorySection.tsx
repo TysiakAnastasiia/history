@@ -1,24 +1,26 @@
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
 import { MapExplorer } from '../components/MapExplorer'
 import { MediaFigure } from '../components/MediaFigure'
 import { Quiz } from '../components/Quiz'
 import { BackBar, Button, Card, LinkButton, Screen } from '../components/ui'
-import { BY_ID, PACKS, topicTitle } from '../content'
+import { BY_ID, hasTopic, loadPack, topicTitle } from '../content'
+import type { TopicPack } from '../lib/schema'
 import { useProfile } from '../lib/profile'
 
 export function TheorySection() {
   const { n: nParam, section } = useParams()
   const n = Number(nParam)
-  const pack = PACKS[n]
-  const idx = pack?.theory.findIndex((s) => s.id === section) ?? -1
-  if (!pack || idx < 0) return <Navigate to={pack ? `/topic/${n}` : '/topics'} replace />
+  if (!hasTopic(n)) return <Navigate to="/topics" replace />
+  const pack = use(loadPack(n))
+  const idx = pack.theory.findIndex((s) => s.id === section)
+  if (idx < 0) return <Navigate to={`/topic/${n}`} replace />
   // key: при переході на інший розділ стан (режим перевірки) скидається
-  return <SectionView key={section} n={n} idx={idx} />
+  return <SectionView key={section} pack={pack} idx={idx} />
 }
 
-function SectionView({ n, idx }: { n: number; idx: number }) {
-  const pack = PACKS[n]
+function SectionView({ pack, idx }: { pack: TopicPack; idx: number }) {
+  const n = pack.topic
   const { update } = useProfile()
   const [testing, setTesting] = useState(false)
 

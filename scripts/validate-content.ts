@@ -1,5 +1,5 @@
 // Перевірка всього контенту за схемою: npm run validate (запускається і перед build).
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import type { z } from 'zod'
 import {
@@ -70,6 +70,17 @@ if (errors.length) {
   )
   process.exit(1)
 }
+// Покажчик для застосунку: які теми мають контент (сам контент вантажиться по темах)
+const index = {
+  topics: Object.fromEntries(
+    packs
+      .filter((p) => p.questions.length + p.theory.length > 0)
+      .map((p) => [p.topic, { questions: p.questions.length, sections: p.theory.length }]),
+  ),
+}
+mkdirSync('src/generated', { recursive: true })
+writeFileSync('src/generated/content-index.json', `${JSON.stringify(index, null, 2)}\n`)
+
 const n = packs.reduce((s, p) => s + p.questions.length, 0)
 console.log(
   `✓ Контент у порядку: тем ${packs.length}, питань ${n}, програму покрито повністю в темах: ${covered}`,

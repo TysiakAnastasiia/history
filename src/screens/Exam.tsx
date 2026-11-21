@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { use, useEffect, useMemo, useRef, useState } from 'react'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { Explanation } from '../components/Explanation'
 import { QuestionMedia } from '../components/QuestionMedia'
 import { Mascot } from '../components/Mascot'
 import { QuestionView } from '../components/QuestionView'
 import { BackBar, Button, Card, LinkButton, Screen, Title } from '../components/ui'
-import { QUESTIONS } from '../content'
+import { loadAll } from '../content'
 import { useProfile } from '../lib/profile'
 import type { Question } from '../lib/schema'
 import {
@@ -28,9 +28,9 @@ const FORMAT: { type: Question['type']; count: number }[] = [
 const MINUTES = 60
 const FULL_MAX = 54
 
-function buildExam(): Question[] {
+function buildExam(all: Question[]): Question[] {
   return FORMAT.flatMap(({ type, count }) =>
-    shuffle(QUESTIONS.filter((q) => q.type === type)).slice(0, count),
+    shuffle(all.filter((q) => q.type === type)).slice(0, count),
   )
 }
 
@@ -38,11 +38,12 @@ type Phase = 'intro' | 'running' | 'results'
 
 export function Exam() {
   const [phase, setPhase] = useState<Phase>('intro')
-  const [tasks, setTasks] = useState<Question[]>(buildExam)
+  const all = use(loadAll()).flatMap((p) => p.questions)
+  const [tasks, setTasks] = useState<Question[]>(() => buildExam(all))
   const [responses, setResponses] = useState<Response[]>([])
 
   const start = () => {
-    const t = buildExam()
+    const t = buildExam(all)
     setTasks(t)
     setResponses(t.map(() => null))
     setPhase('running')

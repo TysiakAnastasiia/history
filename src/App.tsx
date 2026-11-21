@@ -1,6 +1,7 @@
 import { MotionConfig } from 'motion/react'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { Loading } from './components/Loading'
 import { useProfile } from './lib/profile'
 import { Blitz } from './screens/Blitz'
 import { Exam } from './screens/Exam'
@@ -23,20 +24,22 @@ export default function App() {
   return (
     // «Анімації: вимк.» або системне «зменшити рух» вимикають рух в усьому застосунку
     <MotionConfig reducedMotion={profile.animations ? 'user' : 'always'}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/topics" element={<Topics />} />
-        <Route path="/topic/:n" element={<Topic />} />
-        {/* key: новий запуск тренування при зміні режиму (усі / помилки) */}
-        <Route path="/topic/:n/quiz" element={<TopicQuiz key={pathname + search} />} />
-        <Route path="/topic/:n/theory/:section" element={<TheorySection />} />
-        <Route path="/blitz" element={<Blitz />} />
-        <Route path="/mix" element={<Mix />} />
-        <Route path="/exam" element={<Exam />} />
-        <Route path="/mistakes" element={<Mistakes />} />
-        <Route path="/facts" element={<Facts />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <Suspense fallback={<Loading text="Завантажуємо тему…" />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/topics" element={<Topics />} />
+          <Route path="/topic/:n" element={<Topic />} />
+          {/* key: новий запуск тренування при зміні режиму (усі / помилки) */}
+          <Route path="/topic/:n/quiz" element={<TopicQuiz key={pathname + search} />} />
+          <Route path="/topic/:n/theory/:section" element={<TheorySection />} />
+          <Route path="/blitz" element={<Blitz />} />
+          <Route path="/mix" element={<Mix />} />
+          <Route path="/exam" element={<Exam />} />
+          <Route path="/mistakes" element={<Mistakes />} />
+          <Route path="/facts" element={<Facts />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </MotionConfig>
   )
 }

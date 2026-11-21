@@ -1,16 +1,18 @@
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { Quiz } from '../components/Quiz'
 import { BackBar, Button, LinkButton, Screen } from '../components/ui'
-import { QUESTIONS } from '../content'
+import { loadAll } from '../content'
 import { useProfile } from '../lib/profile'
-import type { SingleQuestion } from '../lib/schema'
+import type { Question, SingleQuestion } from '../lib/schema'
 import { shuffle } from '../lib/util'
 
-const pool = () => shuffle(QUESTIONS.filter((q): q is SingleQuestion => q.type === 'single'))
+const pool = (all: Question[]) =>
+  shuffle(all.filter((q): q is SingleQuestion => q.type === 'single'))
 
 export function Blitz() {
+  const all = use(loadAll()).flatMap((p) => p.questions)
   const { profile } = useProfile()
-  const [round, setRound] = useState(() => ({ n: 0, questions: pool() }))
+  const [round, setRound] = useState(() => ({ n: 0, questions: pool(all) }))
 
   return (
     <Screen>
@@ -24,7 +26,7 @@ export function Blitz() {
           <div className="flex flex-col gap-2.5">
             <Button
               variant="primary"
-              onClick={() => setRound((r) => ({ n: r.n + 1, questions: pool() }))}
+              onClick={() => setRound((r) => ({ n: r.n + 1, questions: pool(all) }))}
             >
               Ще раз
             </Button>
