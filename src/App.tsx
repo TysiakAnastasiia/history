@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Loading } from './components/Loading'
 import { Chronology } from './games/Chronology'
 import { Hangman } from './games/Hangman'
+import { WhoAmI } from './games/WhoAmI'
 import { Memory } from './games/Memory'
 import { useProfile } from './lib/profile'
 import { Blitz } from './screens/Blitz'
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/games/memory" element={<Memory />} />
           <Route path="/games/hangman" element={<Hangman />} />
           <Route path="/games/chronology" element={<Chronology />} />
+          <Route path="/games/whoami" element={<WhoAmI />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

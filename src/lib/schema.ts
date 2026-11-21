@@ -18,6 +18,8 @@ export const factSchema = z.object({
   year: z.number().int().optional(),
   title: text,
   details: text.optional(),
+  /** підказки для гри «Хто я?» — від загальної до найконкретнішої (для персоналій) */
+  hints: z.array(text).min(3).optional(),
   source: text,
   status,
 })

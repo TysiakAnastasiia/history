@@ -96,6 +96,14 @@ export function Home() {
             : 'події по порядку'}
         </Aside>
       </LinkButton>
+      <LinkButton to="/games/whoami">
+        <Icon name="person" /> Хто я?
+        <Aside>
+          {profile.gameRecords.whoami
+            ? `рекорд серії: ${profile.gameRecords.whoami}`
+            : 'діяч за підказками'}
+        </Aside>
+      </LinkButton>
       <LinkButton to="/games/hangman">
         <Icon name="letters" /> Шибениця
         <Aside>
@@ -104,7 +112,7 @@ export function Home() {
       </LinkButton>
       <Button disabled className="opacity-60">
         <Icon name="games" />
-        <span>Хто я? · Кросворд · Морський бій</span>
+        <span>Кросворд · Морський бій · Захист фортеці</span>
         <Aside>скоро</Aside>
       </Button>
 
