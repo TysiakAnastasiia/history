@@ -131,7 +131,7 @@ function Round({ packs, onRestart }: { packs: TopicPack[]; onRestart: () => void
   if (gaps.length === 0)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <p className="text-muted">Поки що немає матеріалу для гри.</p>
       </Screen>
     )
@@ -139,7 +139,7 @@ function Round({ packs, onRestart }: { packs: TopicPack[]; onRestart: () => void
   if (done)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <Card className="flex flex-col items-center gap-2 text-center">
           <Mascot mood={good >= ROUND / 2 ? 'happy' : 'sad'} size={120} />
           <div className="font-sans text-6xl font-extralight">{good}</div>
@@ -150,8 +150,8 @@ function Round({ packs, onRestart }: { packs: TopicPack[]; onRestart: () => void
             <Button variant="primary" onClick={onRestart}>
               Ще раунд
             </Button>
-            <LinkButton to="/" className="justify-center rounded-full">
-              На головну
+            <LinkButton to="/games" className="justify-center rounded-full">
+              До ігор
             </LinkButton>
           </div>
         </Card>
@@ -175,7 +175,7 @@ function Round({ packs, onRestart }: { packs: TopicPack[]; onRestart: () => void
 
   return (
     <Screen>
-      <BackBar>
+      <BackBar to="/games">
         Заповни пропуск · {i + 1}/{gaps.length}
         {record !== undefined && ` · рекорд ${record}/${ROUND}`}
       </BackBar>

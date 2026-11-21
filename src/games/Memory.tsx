@@ -41,7 +41,7 @@ export function Memory() {
   if (enough < PAIRS)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <p className="text-muted">Поки що замало подій із датами для гри.</p>
       </Screen>
     )
@@ -116,7 +116,7 @@ function MemoryRound({ facts, onRestart }: { facts: Fact[]; onRestart: () => voi
   if (phase === 'done')
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <Card className="flex flex-col items-center gap-2 text-center">
           <Mascot mood={mistakes <= 2 ? 'happy' : 'sad'} size={120} />
           <div className="font-sans text-6xl font-extralight">{mistakes}</div>
@@ -128,8 +128,8 @@ function MemoryRound({ facts, onRestart }: { facts: Fact[]; onRestart: () => voi
             <Button variant="primary" onClick={onRestart}>
               Ще раз
             </Button>
-            <LinkButton to="/" className="justify-center rounded-full">
-              На головну
+            <LinkButton to="/games" className="justify-center rounded-full">
+              До ігор
             </LinkButton>
           </div>
         </Card>
@@ -138,7 +138,9 @@ function MemoryRound({ facts, onRestart }: { facts: Fact[]; onRestart: () => voi
 
   return (
     <Screen>
-      <BackBar>Картки на пам’ять{record !== undefined && ` · рекорд: ${record} помилок`}</BackBar>
+      <BackBar to="/games">
+        Картки на пам’ять{record !== undefined && ` · рекорд: ${record} помилок`}
+      </BackBar>
       <div className="flex items-end justify-between gap-4">
         <Title>{phase === 'memorize' ? 'Запам’ятай' : 'Знайди пари'}</Title>
         <span className="font-sans text-4xl font-extralight tabular-nums">

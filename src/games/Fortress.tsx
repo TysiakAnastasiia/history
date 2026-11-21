@@ -35,7 +35,7 @@ export function Fortress() {
   if (questions.length < 10)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <p className="text-muted">Поки що замало питань для гри.</p>
       </Screen>
     )
@@ -190,7 +190,7 @@ function Game({ questions, onRestart }: { questions: SingleQuestion[]; onRestart
 
   return (
     <Screen wide>
-      <BackBar>Захист фортеці{record ? ` · рекорд: ${record} хвиль` : ''}</BackBar>
+      <BackBar to="/games">Захист фортеці{record ? ` · рекорд: ${record} хвиль` : ''}</BackBar>
       <div className="flex items-end justify-between gap-4">
         <Title>Захист фортеці</Title>
         <div className="pb-2 text-right text-sm">
@@ -279,8 +279,8 @@ function Game({ questions, onRestart }: { questions: SingleQuestion[]; onRestart
           <Button variant="primary" onClick={onRestart}>
             Ще раз
           </Button>
-          <LinkButton to="/" className="justify-center rounded-full">
-            На головну
+          <LinkButton to="/games" className="justify-center rounded-full">
+            До ігор
           </LinkButton>
         </motion.div>
       ) : (

@@ -53,7 +53,7 @@ export function Crossword() {
 
   return (
     <Screen wide>
-      <BackBar>Кросворд</BackBar>
+      <BackBar to="/games">Кросворд</BackBar>
       <Title>Кросворд</Title>
       <div className="flex flex-wrap gap-2" role="tablist" aria-label="Режим">
         {(['mix', ...topics] as const).map((m) => (
@@ -309,8 +309,8 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
           <Button variant="primary" onClick={onNew}>
             Новий кросворд
           </Button>
-          <LinkButton to="/" className="justify-center rounded-full">
-            На головну
+          <LinkButton to="/games" className="justify-center rounded-full">
+            До ігор
           </LinkButton>
         </motion.div>
       ) : (

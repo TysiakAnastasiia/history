@@ -19,7 +19,7 @@ export function WhoSaid() {
   if (authors.length < 4)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <p className="text-muted">Поки що замало цитат для гри.</p>
       </Screen>
     )
@@ -75,7 +75,7 @@ function Round({
   if (done)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <Card className="flex flex-col items-center gap-2 text-center">
           <Mascot mood={good >= deck.length / 2 ? 'happy' : 'sad'} size={120} />
           <div className="font-sans text-6xl font-extralight">{good}</div>
@@ -86,8 +86,8 @@ function Round({
             <Button variant="primary" onClick={onRestart}>
               Ще раунд
             </Button>
-            <LinkButton to="/" className="justify-center rounded-full">
-              На головну
+            <LinkButton to="/games" className="justify-center rounded-full">
+              До ігор
             </LinkButton>
           </div>
         </Card>
@@ -99,7 +99,7 @@ function Round({
 
   return (
     <Screen>
-      <BackBar>
+      <BackBar to="/games">
         Хто це сказав? · {i + 1}/{deck.length}
         {record !== undefined && ` · рекорд ${record}/${ROUND}`}
       </BackBar>

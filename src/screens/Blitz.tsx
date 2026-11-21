@@ -16,7 +16,7 @@ export function Blitz() {
 
   return (
     <Screen>
-      <BackBar>Бліц · рекорд {profile.blitz}</BackBar>
+      <BackBar to="/games">Бліц · рекорд {profile.blitz}</BackBar>
       <Quiz
         key={round.n}
         questions={round.questions}
@@ -30,7 +30,7 @@ export function Blitz() {
             >
               Ще раз
             </Button>
-            <LinkButton to="/">На головну</LinkButton>
+            <LinkButton to="/games">До ігор</LinkButton>
           </div>
         )}
       />

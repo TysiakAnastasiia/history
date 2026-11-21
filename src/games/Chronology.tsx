@@ -31,7 +31,7 @@ export function Chronology() {
   if (available < START)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <p className="text-muted">Поки що замало подій із датами для гри.</p>
       </Screen>
     )
@@ -85,7 +85,7 @@ function Game({ facts, max }: { facts: Fact[]; max: number }) {
 
   return (
     <Screen>
-      <BackBar>
+      <BackBar to="/games">
         Хронологія · серія {streak}
         {record ? ` · рекорд ${record}` : ''}
       </BackBar>
@@ -183,8 +183,8 @@ function Game({ facts, max }: { facts: Fact[]; max: number }) {
           <Button variant="primary" onClick={next} autoFocus>
             Наступний раунд
           </Button>
-          <LinkButton to="/" className="justify-center rounded-full">
-            На головну
+          <LinkButton to="/games" className="justify-center rounded-full">
+            До ігор
           </LinkButton>
         </motion.div>
       )}

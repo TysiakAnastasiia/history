@@ -26,7 +26,7 @@ export function WhoAmI() {
   if (persons.length < OPTIONS)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <p className="text-muted">Поки що замало діячів із підказками для гри.</p>
       </Screen>
     )
@@ -107,7 +107,7 @@ function Round({
 
   return (
     <Screen>
-      <BackBar>
+      <BackBar to="/games">
         Хто я? · серія {streak}
         {record ? ` · рекорд ${record}` : ''}
       </BackBar>
@@ -197,8 +197,8 @@ function Round({
           <Button variant="primary" onClick={() => onNext(won)} autoFocus>
             Наступний діяч
           </Button>
-          <LinkButton to="/" className="justify-center rounded-full">
-            На головну
+          <LinkButton to="/games" className="justify-center rounded-full">
+            До ігор
           </LinkButton>
         </motion.div>
       )}

@@ -88,7 +88,7 @@ export function Battleship() {
   if (events.length < need)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <p className="text-muted">Поки що замало подій із датами для гри.</p>
       </Screen>
     )
@@ -217,7 +217,7 @@ function Game({ events, onRestart }: { events: Fact[]; onRestart: () => void }) 
 
   return (
     <Screen wide>
-      <BackBar>Морський бій{record ? ` · перемог ${record}` : ''}</BackBar>
+      <BackBar to="/games">Морський бій{record ? ` · перемог ${record}` : ''}</BackBar>
       <Title>Морський бій</Title>
       <p className="text-muted" aria-live="polite">
         {over ? '' : turn === 'bot' ? 'Хід суперника…' : log}
@@ -309,8 +309,8 @@ function Game({ events, onRestart }: { events: Fact[]; onRestart: () => void }) 
           <Button variant="primary" onClick={onRestart}>
             Ще бій
           </Button>
-          <LinkButton to="/" className="justify-center rounded-full">
-            На головну
+          <LinkButton to="/games" className="justify-center rounded-full">
+            До ігор
           </LinkButton>
         </motion.div>
       )}

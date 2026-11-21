@@ -27,7 +27,7 @@ export function Hangman() {
   if (terms.length === 0)
     return (
       <Screen>
-        <BackBar />
+        <BackBar to="/games" />
         <p className="text-muted">Поки що немає термінів для гри.</p>
       </Screen>
     )
@@ -107,7 +107,7 @@ function Word({
 
   return (
     <Screen wide>
-      <BackBar>
+      <BackBar to="/games">
         Шибениця · серія {streak}
         {record ? ` · рекорд ${record}` : ''}
       </BackBar>
@@ -171,8 +171,8 @@ function Word({
               <Button variant="primary" onClick={() => onNext(won)} autoFocus>
                 Наступне слово
               </Button>
-              <LinkButton to="/" className="justify-center rounded-full">
-                На головну
+              <LinkButton to="/games" className="justify-center rounded-full">
+                До ігор
               </LinkButton>
             </motion.div>
           ) : (
