@@ -7,6 +7,7 @@ import {
   crossCheck,
   factsFile,
   funFactsFile,
+  journeyFile,
   mapsFile,
   mediaFile,
   programFile,
@@ -49,6 +50,7 @@ const packs: TopicPack[] = readdirSync(ROOT, { withFileTypes: true })
     questions: load(`${d.name}/questions.json`, questionsFile, []),
     maps: load(`${d.name}/maps.json`, mapsFile, []),
     quotes: load(`${d.name}/quotes.json`, quotesFile, []),
+    journey: load(`${d.name}/journey.json`, journeyFile, null),
   }))
 const media = load('media.json', mediaFile, [])
 for (const m of media)
@@ -77,7 +79,10 @@ const index = {
   topics: Object.fromEntries(
     packs
       .filter((p) => p.questions.length + p.theory.length > 0)
-      .map((p) => [p.topic, { questions: p.questions.length, sections: p.theory.length }]),
+      .map((p) => [
+        p.topic,
+        { questions: p.questions.length, sections: p.theory.length, journey: !!p.journey },
+      ]),
   ),
 }
 mkdirSync('src/generated', { recursive: true })

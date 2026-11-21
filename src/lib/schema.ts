@@ -44,6 +44,71 @@ export const quoteSchema = z.object({
   status,
 })
 
+const lonLat = z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)])
+
+/** «Подорож епохами»: сюжет епохи — персонажі, сцени на карті, бос */
+const lookEnum = z.enum(['prince', 'elder', 'warrior', 'helmet', 'princess', 'monk', 'chronicler'])
+const line = z.object({
+  /** id персонажа з characters або 'guide' (кіт-провідник) */
+  who: id,
+  text,
+})
+export const journeySchema = z.object({
+  title: text,
+  /** межі карти епохи: [довгота мін, широта мін, довгота макс, широта макс] */
+  view: z.tuple([z.number(), z.number(), z.number(), z.number()]),
+  intro: z.array(line).min(1),
+  characters: z.record(
+    id,
+    z.object({
+      name: text,
+      role: text,
+      /** зовнішність портрета */
+      look: lookEnum,
+      /** колір одягу (CSS) */
+      color: z.string().optional(),
+    }),
+  ),
+  scenes: z
+    .array(
+      z.object({
+        id,
+        place: text,
+        year: z.number().int(),
+        at: lonLat,
+        character: id,
+        lines: z.array(line).min(1),
+        /** запитання персонажа: варіанти відповіді з реакцією на кожен */
+        ask: z.object({
+          text,
+          options: z
+            .array(z.object({ text, correct: z.boolean().optional(), reply: text }))
+            .min(2)
+            .refine(
+              (o) => o.filter((x) => x.correct).length === 1,
+              'рівно один правильний варіант',
+            ),
+        }),
+        outro: z.array(line).default([]),
+        reward: z.object({ name: text, about: text, image: id.optional() }),
+      }),
+    )
+    .min(1),
+  boss: z.object({
+    character: id,
+    place: text,
+    year: z.number().int(),
+    at: lonLat,
+    intro: z.array(line).min(1),
+    /** id питань формату НМТ */
+    questions: z.array(id).min(3),
+    /** скільки правильних, щоб перемогти */
+    pass: z.number().int().min(1),
+    win: z.array(line).min(1),
+    lose: z.array(line).min(1),
+  }),
+})
+
 /** Зображення з відкритих джерел; автор і ліцензія показуються під ним */
 export const mediaSchema = z.object({
   id,
@@ -56,8 +121,6 @@ export const mediaSchema = z.object({
   /** сторінка файлу в джерелі (Вікісховище тощо) */
   source: z.string().url(),
 })
-
-const lonLat = z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)])
 
 /** Шар історичної карти: області (племена, князівства), маршрути (походи, шляхи), міста */
 export const mapLayerSchema = z.object({
@@ -175,6 +238,7 @@ export const theoryFile = z.array(sectionSchema)
 export const questionsFile = z.array(questionSchema)
 export const mediaFile = z.array(mediaSchema)
 export const quotesFile = z.array(quoteSchema)
+export const journeyFile = journeySchema.nullable()
 export const mapsFile = z.array(mapLayerSchema)
 
 export type Topic = z.infer<typeof topicSchema>
@@ -185,6 +249,8 @@ export type Question = z.infer<typeof questionSchema>
 export type SingleQuestion = Extract<Question, { type: 'single' }>
 export type Media = z.infer<typeof mediaSchema>
 export type Quote = z.infer<typeof quoteSchema>
+export type Journey = z.infer<typeof journeySchema>
+export type Look = z.infer<typeof lookEnum>
 export type MapLayer = z.infer<typeof mapLayerSchema>
 export type LonLat = [number, number]
 
@@ -196,6 +262,7 @@ export interface TopicPack {
   questions: Question[]
   maps: MapLayer[]
   quotes: Quote[]
+  journey: Journey | null
 }
 
 /** Перевірки, які не виражаються схемою: унікальні id і посилання між файлами. */
@@ -229,6 +296,34 @@ export function crossCheck(packs: TopicPack[], media: Media[] = []): string[] {
         if (inner.has(x.id)) errors.push(`${where}, карта ${l.id}: повторюється «${x.id}»`)
         inner.add(x.id)
       }
+    }
+    if (p.journey) {
+      const j = p.journey
+      const chars = new Set(Object.keys(j.characters))
+      const who = (w: string) => w === 'guide' || chars.has(w)
+      const lines = [
+        ...j.intro,
+        ...j.boss.intro,
+        ...j.boss.win,
+        ...j.boss.lose,
+        ...j.scenes.flatMap((sc) => [...sc.lines, ...sc.outro]),
+      ]
+      for (const l of lines)
+        if (!who(l.who)) errors.push(`${where}, journey: немає персонажа «${l.who}»`)
+      for (const sc of j.scenes) {
+        if (!chars.has(sc.character))
+          errors.push(`${where}, journey ${sc.id}: немає персонажа «${sc.character}»`)
+        if (sc.reward.image && !mediaIds.has(sc.reward.image))
+          errors.push(`${where}, journey ${sc.id}: немає зображення «${sc.reward.image}»`)
+      }
+      if (!chars.has(j.boss.character))
+        errors.push(`${where}, journey boss: немає персонажа «${j.boss.character}»`)
+      for (const q of j.boss.questions)
+        if (!qIds.has(q)) errors.push(`${where}, journey boss: немає питання «${q}»`)
+      if (j.boss.pass > j.boss.questions.length)
+        errors.push(`${where}, journey boss: pass більше за кількість питань`)
+      const sids = j.scenes.map((sc) => sc.id)
+      if (new Set(sids).size !== sids.length) errors.push(`${where}, journey: повторюються id сцен`)
     }
     for (const s of p.theory) {
       for (const c of s.check)

@@ -6,6 +6,7 @@ import {
   funFactsFile,
   mapsFile,
   mediaFile,
+  journeyFile,
   questionsFile,
   quotesFile,
   theoryFile,
@@ -23,9 +24,8 @@ export const TOPICS = topicsFile.parse(topicsJson)
 export const topicTitle = (n: number) => TOPICS.find((t) => t.n === n)?.title ?? `Тема ${n}`
 
 /** Покажчик: які теми мають контент і скільки в них питань і розділів */
-export const INDEX: Record<number, { questions: number; sections: number }> = Object.fromEntries(
-  Object.entries(contentIndex.topics).map(([n, v]) => [Number(n), v]),
-)
+export const INDEX: Record<number, { questions: number; sections: number; journey?: boolean }> =
+  Object.fromEntries(Object.entries(contentIndex.topics).map(([n, v]) => [Number(n), v]))
 export const hasTopic = (n: number) => n in INDEX
 
 /** Номер теми з id питання: «hist-ua.t03.q001» → 3 */
@@ -65,6 +65,7 @@ const lazy: Record<string, Loader> = import.meta.glob(
     '../content/hist-ua/topic-*/questions.json',
     '../content/hist-ua/topic-*/maps.json',
     '../content/hist-ua/topic-*/quotes.json',
+    '../content/hist-ua/topic-*/journey.json',
   ],
   { import: 'default' },
 )
@@ -88,7 +89,9 @@ export function loadPack(n: number): Promise<TopicPack> {
       fileOf(n, 'questions'),
       fileOf(n, 'maps'),
       fileOf(n, 'quotes'),
-    ]).then(([facts, theory, questions, maps, quotes]) => {
+      lazy[`../content/hist-ua/topic-${String(n).padStart(2, '0')}/journey.json`]?.() ??
+        Promise.resolve(null),
+    ]).then(([facts, theory, questions, maps, quotes, journey]) => {
       const pack: TopicPack = {
         topic: n,
         facts: factsFile.parse(facts),
@@ -97,6 +100,7 @@ export function loadPack(n: number): Promise<TopicPack> {
         questions: questionsFile.parse(questions),
         maps: mapsFile.parse(maps),
         quotes: quotesFile.parse(quotes),
+        journey: journeyFile.parse(journey),
       }
       for (const q of pack.questions) BY_ID[q.id] = q
       for (const l of pack.maps) MAPS[l.id] = l
