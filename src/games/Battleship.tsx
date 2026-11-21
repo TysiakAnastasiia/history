@@ -26,6 +26,20 @@ type Board = { ships: Ship[]; shots: Set<string> }
 
 const key = (r: number, c: number) => `${r},${c}`
 
+const inBounds = (cells: [number, number][]) =>
+  cells.every(([r, c]) => r >= 0 && c >= 0 && r < N && c < N)
+/** Клітинки вільні й не торкаються інших кораблів (навіть по діагоналі) */
+const fits = (taken: Set<string>, cells: [number, number][]) =>
+  inBounds(cells) &&
+  !cells.some(([a, b]) =>
+    [-1, 0, 1].some((dr) => [-1, 0, 1].some((dc) => taken.has(key(a + dr, b + dc)))),
+  )
+const shipCells = (r: number, c: number, len: number, down: boolean) =>
+  Array.from(
+    { length: len },
+    (_, i) => [r + (down ? i : 0), c + (down ? 0 : i)] as [number, number],
+  )
+
 /** Розставити кораблі випадково, не торкаючись один одного */
 function placeShips(chains: Fact[][]): Ship[] {
   for (let attempt = 0; attempt < 500; attempt++) {
@@ -92,7 +106,139 @@ export function Battleship() {
         <p className="text-muted">Поки що замало подій із датами для гри.</p>
       </Screen>
     )
-  return <Game key={round} events={events} onRestart={() => setRound((r) => r + 1)} />
+  return <Setup key={round} events={events} onRestart={() => setRound((r) => r + 1)} />
+}
+
+function Setup({ events, onRestart }: { events: Fact[]; onRestart: () => void }) {
+  const [mine, setMine] = useState<Ship[] | null>(null)
+  if (!mine) return <Placement events={events} onReady={setMine} />
+  return <Game events={events} myShips={mine} onRestart={onRestart} />
+}
+
+/** Розстановка свого флоту: вибрати напрямок і натиснути клітинку початку корабля */
+function Placement({ events, onReady }: { events: Fact[]; onReady: (ships: Ship[]) => void }) {
+  const [chains] = useState(() => makeChains(events))
+  const [ships, setShips] = useState<Ship[]>([])
+  const [down, setDown] = useState(false)
+  const [hover, setHover] = useState<[number, number] | null>(null)
+  const [msg, setMsg] = useState('')
+  const next = chains[ships.length]
+  const taken = new Set(ships.flatMap((s) => s.cells.map(([r, c]) => key(r, c))))
+  const preview = next && hover ? shipCells(hover[0], hover[1], next.length, down) : []
+  const previewOk = preview.length > 0 && fits(taken, preview)
+
+  const place = (r: number, c: number) => {
+    if (!next) return
+    const cells = shipCells(r, c, next.length, down)
+    if (!fits(taken, cells)) {
+      setMsg(
+        inBounds(cells)
+          ? 'Кораблі не можуть торкатися — навіть кутами.'
+          : 'Корабель не вміщається — поверни його або вибери іншу клітинку.',
+      )
+      return
+    }
+    setMsg('')
+    setShips([...ships, { cells, events: next }])
+  }
+
+  return (
+    <Screen wide>
+      <BackBar to="/games">Морський бій · розстановка</BackBar>
+      <Title>Розстав флот</Title>
+      <p className="text-muted">
+        Кожен корабель — ланцюжок подій. Вибери напрямок і натисни клітинку, з якої почнеться
+        корабель.
+      </p>
+      <div className="flex flex-col gap-6 md:flex-row md:items-start">
+        <div className="mx-auto w-full max-w-md min-w-0 flex-1">
+          <div
+            className="grid gap-1"
+            style={{ gridTemplateColumns: `repeat(${N}, minmax(0, 1fr))` }}
+            onMouseLeave={() => setHover(null)}
+          >
+            {Array.from({ length: N * N }, (_, n) => {
+              const r = Math.floor(n / N)
+              const c = n % N
+              const own = taken.has(key(r, c))
+              const inPreview = preview.some(([a, b]) => a === r && b === c)
+              const cls = own
+                ? 'border-fg/40 bg-fg/25'
+                : inPreview
+                  ? previewOk
+                    ? 'border-accent bg-accent/30'
+                    : 'border-bad bg-bad/25'
+                  : 'border-line bg-glass hover:border-fg/30'
+              return (
+                <button
+                  key={n}
+                  onClick={() => place(r, c)}
+                  onMouseEnter={() => setHover([r, c])}
+                  aria-label={`Клітинка ${r + 1}, ${c + 1}${own ? ', корабель' : ''}`}
+                  className={`aspect-square rounded-md border transition ${cls}`}
+                />
+              )
+            })}
+          </div>
+          {msg && <p className="text-bad mt-2 text-sm">{msg}</p>}
+        </div>
+
+        <div className="flex flex-col gap-2.5 md:w-72 md:shrink-0">
+          <ol className="flex flex-col gap-1.5">
+            {chains.map((ch, i) => (
+              <li
+                key={i}
+                className={`flex items-center gap-2 text-sm ${i === ships.length ? 'font-semibold' : i < ships.length ? 'text-muted' : ''}`}
+              >
+                <span className="flex gap-0.5">
+                  {ch.map((_, k) => (
+                    <span
+                      key={k}
+                      className={`size-3.5 rounded-sm ${i < ships.length ? 'bg-accent' : i === ships.length ? 'bg-fg/60' : 'bg-line'}`}
+                    />
+                  ))}
+                </span>
+                {ch.length}-палубний{' '}
+                {i < ships.length ? '✓' : i === ships.length ? '← ставимо' : ''}
+              </li>
+            ))}
+          </ol>
+          {next ? (
+            <Button className="justify-center rounded-full" onClick={() => setDown((d) => !d)}>
+              Повернути: {down ? 'вертикально ↕' : 'горизонтально ↔'}
+            </Button>
+          ) : (
+            <Button variant="primary" onClick={() => onReady(ships)}>
+              До бою!
+            </Button>
+          )}
+          <div className="flex gap-2">
+            <Button
+              className="justify-center rounded-full text-sm"
+              disabled={ships.length === 0}
+              onClick={() => setShips(ships.slice(0, -1))}
+            >
+              Прибрати останній
+            </Button>
+            <Button
+              className="justify-center rounded-full text-sm"
+              onClick={() => setShips(placeShips(chains))}
+            >
+              Випадково
+            </Button>
+          </div>
+          {ships.length > 0 && (
+            <button
+              className="text-muted self-start text-sm underline"
+              onClick={() => setShips([])}
+            >
+              Скинути все
+            </button>
+          )}
+        </div>
+      </div>
+    </Screen>
+  )
 }
 
 interface Question {
@@ -100,16 +246,21 @@ interface Question {
   options: number[]
 }
 
-function Game({ events, onRestart }: { events: Fact[]; onRestart: () => void }) {
+function Game({
+  events,
+  myShips,
+  onRestart,
+}: {
+  events: Fact[]
+  myShips: Ship[]
+  onRestart: () => void
+}) {
   const { profile, update } = useProfile()
   const [enemy, setEnemy] = useState<Board>(() => ({
     ships: placeShips(makeChains(events)),
     shots: new Set(),
   }))
-  const [mine, setMine] = useState<Board>(() => ({
-    ships: placeShips(makeChains(events)),
-    shots: new Set(),
-  }))
+  const [mine, setMine] = useState<Board>(() => ({ ships: myShips, shots: new Set() }))
   const [target, setTarget] = useState<[number, number] | null>(null)
   const [question, setQuestion] = useState<Question | null>(null)
   const [log, setLog] = useState<string>('Виберіть клітинку на полі суперника.')
