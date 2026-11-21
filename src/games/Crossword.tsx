@@ -90,6 +90,12 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
   const [active, setActive] = useState(0) // індекс слова
   const [wrong, setWrong] = useState<Set<string>>(new Set())
   const [solved, setSolved] = useState(false)
+  /** слова, відповідь на які показано (за них XP не дається) */
+  const [revealed, setRevealed] = useState<Set<number>>(new Set())
+  /** повідомлення про щойно заповнене слово */
+  const [note, setNote] = useState<{ i: number; ok: boolean } | null>(null)
+  /** підсумок після «Перевірити» */
+  const [showSummary, setShowSummary] = useState(false)
   const inputs = useRef<Record<string, HTMLInputElement | null>>({})
 
   // правильна літера для кожної клітинки
@@ -103,6 +109,45 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
     for (const w of cw.words) m[k(w.row, w.col)] = w.num
     return m
   }, [cw])
+
+  /** right — заповнено правильно, wrong — заповнено з помилками, open — не до кінця */
+  const statusOf = (w: Placed, l: Record<string, string> = letters) => {
+    const cells = cellsOf(w).map(([r, c]) => k(r, c))
+    if (cells.some((x) => !l[x])) return 'open' as const
+    return cells.every((x) => l[x] === solution[x]) ? ('right' as const) : ('wrong' as const)
+  }
+  const rightCells = new Set(
+    cw.words
+      .filter((w) => statusOf(w) === 'right')
+      .flatMap((w) => cellsOf(w).map(([r, c]) => k(r, c))),
+  )
+  // у заповнених, але неправильних словах одразу видно хибні літери
+  const badCells = new Set([
+    // позначені «Перевірити» — лише поки літера там досі неправильна
+    ...[...wrong].filter((x) => letters[x] !== solution[x]),
+    ...cw.words
+      .filter((w) => statusOf(w) === 'wrong')
+      .flatMap((w) => cellsOf(w).map(([r, c]) => k(r, c)))
+      .filter((x) => letters[x] !== solution[x]),
+  ])
+
+  const finishIfDone = (l: Record<string, string>) => {
+    if (solved || !cw.words.every((w) => statusOf(w, l) === 'right')) return
+    setSolved(true)
+    const earned = (cw.words.length - revealed.size) * 4
+    update((p) => ({
+      ...p,
+      xp: p.xp + earned,
+      gameRecords: { ...p.gameRecords, [RECORD]: (p.gameRecords[RECORD] ?? 0) + 1 },
+    }))
+    playResult(true, profile.sound)
+  }
+
+  const counts = {
+    right: cw.words.filter((w) => statusOf(w) === 'right').length,
+    bad: cw.words.filter((w) => statusOf(w) === 'wrong').length,
+    open: cw.words.filter((w) => statusOf(w) === 'open').length,
+  }
 
   const word = cw.words[active]
   const activeCells = new Set(cellsOf(word).map(([r, c]) => k(r, c)))
@@ -129,7 +174,22 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
   }
 
   const setLetter = (r: number, c: number, ch: string) => {
-    setLetters((l) => ({ ...l, [k(r, c)]: ch }))
+    const next = { ...letters, [k(r, c)]: ch }
+    // слова, що проходять через клітинку: якщо якесь щойно заповнилося — кажемо, правильно чи ні
+    const before = wordsAt(r, c).map(({ w, i }) => ({
+      i,
+      was: statusOf(w),
+      now: statusOf(w, next),
+    }))
+    const done = before.find((x) => x.was !== x.now && x.now !== 'open')
+    if (done) {
+      setNote({ i: done.i, ok: done.now === 'right' })
+      if (done.now === 'wrong') playResult(false, profile.sound)
+      else if (!cw.words.every((w) => statusOf(w, next) === 'right'))
+        playResult(true, profile.sound)
+    }
+    setLetters(next)
+    finishIfDone(next)
     setWrong((w) => {
       const n = new Set(w)
       n.delete(k(r, c))
@@ -161,28 +221,30 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
   }
 
   const check = () => {
-    const bad = new Set(
-      Object.keys(solution).filter((x) => letters[x] && letters[x] !== solution[x]),
+    setWrong(new Set(Object.keys(solution).filter((x) => letters[x] && letters[x] !== solution[x])))
+    setShowSummary(true)
+    const st = cw.words.map((w) => statusOf(w))
+    playResult(
+      st.every((x) => x === 'right'),
+      profile.sound,
     )
-    setWrong(bad)
-    const complete = Object.keys(solution).every((x) => letters[x] === solution[x])
-    playResult(complete, profile.sound)
-    if (complete && !solved) {
-      setSolved(true)
-      update((p) => ({
-        ...p,
-        xp: p.xp + cw.words.length * 4,
-        gameRecords: { ...p.gameRecords, [RECORD]: (p.gameRecords[RECORD] ?? 0) + 1 },
-      }))
-    }
+  }
+
+  const reveal = (i: number) => {
+    const next = { ...letters }
+    cellsOf(cw.words[i]).forEach(([r, c]) => (next[k(r, c)] = solution[k(r, c)]))
+    setRevealed((s) => new Set(s).add(i))
+    setLetters(next)
+    setNote({ i, ok: true })
+    finishIfDone(next)
   }
 
   const hint = () => {
     if (profile.xp < HINT_COST) return
     const cell = cellsOf(word).find(([r, c]) => letters[k(r, c)] !== solution[k(r, c)])
     if (!cell) return
-    setLetter(cell[0], cell[1], solution[k(cell[0], cell[1])])
     update((p) => ({ ...p, xp: Math.max(0, p.xp - HINT_COST) }))
+    setLetter(cell[0], cell[1], solution[k(cell[0], cell[1])])
     focus(cell[0], cell[1])
   }
 
@@ -204,6 +266,29 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
           {word.word.length} літер
         </p>
         <p className="font-display mt-1 text-xl leading-snug">{word.clue}</p>
+        {note && (
+          <div
+            className={`mt-2 border-t pt-2 text-sm ${note.ok ? 'border-accent/40' : 'border-bad/40'}`}
+            aria-live="polite"
+          >
+            {note.ok ? (
+              <p>
+                <b className="text-accent-text">
+                  ✓ {cw.words[note.i].word}
+                  {revealed.has(note.i) ? ' — відповідь' : ' — правильно!'}
+                </b>{' '}
+                <span className="text-muted">{cw.words[note.i].clue}</span>
+              </p>
+            ) : (
+              <p className="text-bad">
+                ✗ У слові {cw.words[note.i].num} є помилка — червоні літери неправильні.{' '}
+                <button className="underline" onClick={() => reveal(note.i)}>
+                  Показати відповідь
+                </button>
+              </p>
+            )}
+          </div>
+        )}
       </Card>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -244,10 +329,10 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
                       if (ch) step(r, c, 1)
                     }}
                     className={`h-full w-full rounded-md border text-center font-sans text-[clamp(0.85rem,4.2vw,1.35rem)] font-semibold uppercase caret-transparent transition outline-none ${
-                      wrong.has(id)
+                      badCells.has(id)
                         ? 'border-bad bg-bad/15 text-bad'
-                        : solved
-                          ? 'border-accent bg-accent/20'
+                        : solved || rightCells.has(id)
+                          ? 'border-accent bg-accent/20 text-accent-text'
                           : isActive
                             ? 'border-accent bg-accent/15 focus:bg-accent/35'
                             : 'border-line bg-glass focus:border-fg/40'
@@ -284,6 +369,12 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
                     >
                       <b className="mr-1">{w.num}.</b>
                       {w.clue}
+                      {statusOf(w) === 'right' && (
+                        <span className="text-accent-text ml-1 font-semibold">✓</span>
+                      )}
+                      {statusOf(w) === 'wrong' && (
+                        <span className="text-bad ml-1 font-semibold">✗</span>
+                      )}
                     </button>
                   </li>
                 ))}
@@ -303,7 +394,10 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
             <Mascot mood="happy" size={90} />
             <div>
               <div className="text-accent-text text-2xl font-semibold">Моя вам повага</div>
-              <p className="text-muted text-sm">Кросворд розгадано · +{cw.words.length * 4} XP</p>
+              <p className="text-muted text-sm">
+                Кросворд розгадано · +{(cw.words.length - revealed.size) * 4} XP
+                {revealed.size > 0 && ` (відкрито відповідей: ${revealed.size})`}
+              </p>
             </div>
           </Card>
           <Button variant="primary" onClick={onNew}>
@@ -314,21 +408,54 @@ function Board({ cw, onNew }: { cw: CW; onNew: () => void }) {
           </LinkButton>
         </motion.div>
       ) : (
-        <div className="flex flex-col gap-2.5 sm:flex-row">
-          <Button variant="primary" onClick={check}>
-            Перевірити
-          </Button>
-          <Button
-            className="justify-center rounded-full disabled:opacity-50"
-            onClick={hint}
-            disabled={profile.xp < HINT_COST}
-          >
-            Підказати літеру (−{HINT_COST} XP)
-          </Button>
-          <Button className="justify-center rounded-full" onClick={onNew}>
-            Інший кросворд
-          </Button>
-        </div>
+        <>
+          {showSummary && (
+            <Card className="py-4">
+              <p className="font-semibold">
+                Правильно: {counts.right} з {cw.words.length}
+                {counts.bad > 0 && <span className="text-bad"> · з помилками: {counts.bad}</span>}
+                {counts.open > 0 && (
+                  <span className="text-muted"> · не заповнено: {counts.open}</span>
+                )}
+              </p>
+              {counts.bad > 0 && (
+                <ul className="mt-2 flex flex-col gap-1 text-sm">
+                  {cw.words.map((w, i) =>
+                    statusOf(w) === 'wrong' ? (
+                      <li key={i} className="flex flex-wrap items-baseline gap-x-2">
+                        <span className="text-bad">
+                          ✗ {w.num} {w.dir === 'across' ? '→' : '↓'}
+                        </span>
+                        <span className="text-muted min-w-0 flex-1">{w.clue}</span>
+                        <button
+                          className="text-accent-text font-semibold underline-offset-4 hover:underline"
+                          onClick={() => reveal(i)}
+                        >
+                          Показати відповідь
+                        </button>
+                      </li>
+                    ) : null,
+                  )}
+                </ul>
+              )}
+            </Card>
+          )}
+          <div className="flex flex-col gap-2.5 sm:flex-row">
+            <Button variant="primary" onClick={check}>
+              Перевірити
+            </Button>
+            <Button
+              className="justify-center rounded-full disabled:opacity-50"
+              onClick={hint}
+              disabled={profile.xp < HINT_COST}
+            >
+              Підказати літеру (−{HINT_COST} XP)
+            </Button>
+            <Button className="justify-center rounded-full" onClick={onNew}>
+              Інший кросворд
+            </Button>
+          </div>
+        </>
       )}
     </>
   )
