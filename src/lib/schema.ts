@@ -74,7 +74,7 @@ export const journeySchema = z.object({
       z.object({
         id,
         place: text,
-        year: z.number().int(),
+        year: z.union([z.number().int(), text]),
         at: lonLat,
         character: id,
         lines: z.array(line).min(1),
@@ -97,7 +97,7 @@ export const journeySchema = z.object({
   boss: z.object({
     character: id,
     place: text,
-    year: z.number().int(),
+    year: z.union([z.number().int(), text]),
     at: lonLat,
     intro: z.array(line).min(1),
     /** id питань формату НМТ */
@@ -395,8 +395,9 @@ export function coverageCheck(topic: number, program: Program, pack: TopicPack):
   const miss = (kind: string, name: string, where: string) =>
     errors.push(`тема ${topic}: ${kind} «${name}» не покрито ${where}`)
   for (const d of program.dates) {
-    if (!theory.includes(d.year)) miss('дата', `${d.year} — ${d.text}`, 'в теорії')
-    if (!questions.includes(d.year)) miss('дата', `${d.year} — ${d.text}`, 'в питаннях')
+    if (!theory.includes(d.year.toLowerCase())) miss('дата', `${d.year} — ${d.text}`, 'в теорії')
+    if (!questions.includes(d.year.toLowerCase()))
+      miss('дата', `${d.year} — ${d.text}`, 'в питаннях')
   }
   const groups = [
     ['персоналія', program.persons],

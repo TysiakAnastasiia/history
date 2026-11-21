@@ -4,7 +4,7 @@ import type { MapLayer } from '../lib/schema'
 import { BASEMAP } from '../maps/basemap'
 import { centroid, project, RIVER_LABELS, SEA_LABELS, smoothPath, viewBox } from '../maps/geo'
 
-const PALETTE = 7
+const PALETTE = 8
 const color = (i: number) => `var(--map-${(i % PALETTE) + 1})`
 
 interface Props {

@@ -36,6 +36,7 @@
   --map-5: #8f6aa3;
   --map-6: #3f8f88;
   --map-7: #b5596b;
+  --map-8: #7d7466;
   color-scheme: light;
 }
 
@@ -67,6 +68,7 @@
     --map-5: #bb98cf;
     --map-6: #6ec2ba;
     --map-7: #e08899;
+    --map-8: #b3a894;
     color-scheme: dark;
   }
 }
@@ -98,6 +100,7 @@
   --map-5: #bb98cf;
   --map-6: #6ec2ba;
   --map-7: #e08899;
+  --map-8: #b3a894;
   color-scheme: dark;
 }
 

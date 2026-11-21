@@ -1,11 +1,6 @@
 {
   "title": "Вступ до історії України",
-  "view": [
-    21.5,
-    44.0,
-    40.5,
-    52.6
-  ],
+  "view": [21.5, 44.0, 40.5, 52.6],
   "intro": [
     {
       "who": "guide",
@@ -57,10 +52,7 @@
       "id": "archaeologist-davnia",
       "place": "Королеве (Закарпаття)",
       "year": "Стародавня історія",
-      "at": [
-        23.05,
-        48.13
-      ],
+      "at": [23.05, 48.13],
       "character": "archaeologist",
       "lines": [
         {
@@ -105,10 +97,7 @@
       "id": "chronicler-seredn",
       "place": "Київ",
       "year": "Середньовіччя",
-      "at": [
-        30.52,
-        50.45
-      ],
+      "at": [30.52, 50.45],
       "character": "chronicler",
       "lines": [
         {
@@ -153,10 +142,7 @@
       "id": "kobzar-rannomodern",
       "place": "Чигирин",
       "year": "Ранньомодерна доба",
-      "at": [
-        32.66,
-        49.08
-      ],
+      "at": [32.66, 49.08],
       "character": "kobzar",
       "lines": [
         {
@@ -201,10 +187,7 @@
       "id": "photographer-modern",
       "place": "Львів",
       "year": "Модерна доба",
-      "at": [
-        24.03,
-        49.84
-      ],
+      "at": [24.03, 49.84],
       "character": "photographer",
       "lines": [
         {
@@ -249,10 +232,7 @@
       "id": "chronologist-novitnia",
       "place": "Київ",
       "year": "Новітня доба",
-      "at": [
-        30.52,
-        50.45
-      ],
+      "at": [30.52, 50.45],
       "character": "chronologist",
       "lines": [
         {
@@ -298,10 +278,7 @@
     "character": "chronologist",
     "place": "Київ",
     "year": "Підсумок",
-    "at": [
-      30.52,
-      50.45
-    ],
+    "at": [30.52, 50.45],
     "intro": [
       {
         "who": "guide",
