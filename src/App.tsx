@@ -2,6 +2,8 @@ import { MotionConfig } from 'motion/react'
 import { Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Loading } from './components/Loading'
+import { Hangman } from './games/Hangman'
+import { Memory } from './games/Memory'
 import { useProfile } from './lib/profile'
 import { Blitz } from './screens/Blitz'
 import { Exam } from './screens/Exam'
@@ -37,6 +39,8 @@ export default function App() {
           <Route path="/exam" element={<Exam />} />
           <Route path="/mistakes" element={<Mistakes />} />
           <Route path="/facts" element={<Facts />} />
+          <Route path="/games/memory" element={<Memory />} />
+          <Route path="/games/hangman" element={<Hangman />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

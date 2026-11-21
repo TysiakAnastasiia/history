@@ -79,9 +79,24 @@ export function Home() {
           <div className="text-accent-text mt-2 text-sm font-semibold">Усі цікаві факти →</div>
         </Link>
       )}
+      <SectionTitle>Ігри</SectionTitle>
+      <LinkButton to="/games/memory">
+        <Icon name="cards" /> Картки на пам’ять
+        <Aside>
+          {profile.gameRecords.memory !== undefined
+            ? `рекорд: ${profile.gameRecords.memory} помилок`
+            : 'дата + подія'}
+        </Aside>
+      </LinkButton>
+      <LinkButton to="/games/hangman">
+        <Icon name="letters" /> Шибениця
+        <Aside>
+          {profile.gameRecords.hangman ? `рекорд серії: ${profile.gameRecords.hangman}` : 'терміни'}
+        </Aside>
+      </LinkButton>
       <Button disabled className="opacity-60">
         <Icon name="games" />
-        <span>Морський бій · Захист фортеці · Картки</span>
+        <span>Хронологія · Хто я? · Морський бій</span>
         <Aside>скоро</Aside>
       </Button>
 

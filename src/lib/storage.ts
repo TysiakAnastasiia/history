@@ -16,6 +16,8 @@ export interface Profile {
   favorites: string[]
   /** найкращий результат пробного НМТ, у балах */
   examBest: number
+  /** рекорди ігор: id гри → найкращий результат */
+  gameRecords: Record<string, number>
   sound: boolean
   animations: boolean
   bigText: boolean
@@ -30,6 +32,7 @@ export const DEFAULT_PROFILE: Profile = {
   mistakes: [],
   favorites: [],
   examBest: 0,
+  gameRecords: {},
   sound: true,
   animations: true,
   bigText: false,
