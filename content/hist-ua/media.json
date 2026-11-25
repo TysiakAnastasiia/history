@@ -184,5 +184,172 @@
     "author": "Віктор Васнецов",
     "license": "Суспільне надбання",
     "source": "https://commons.wikimedia.org/wiki/File:Kiev_vasnetcov.jpg"
+  },
+  {
+    "id": "t02-tryp-ceramics",
+    "file": "t02/tryp-ceramics.webp",
+    "title": "Мальований посуд трипільської культури (IV–III тис. до н. е.)",
+    "author": "Ismoon",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Two_painted_pottery_jar._Cucuteni-Tripolje_culture._Neues_Museum.jpg"
+  },
+  {
+    "id": "t02-solokha-comb",
+    "file": "t02/solokha-comb.webp",
+    "title": "Золотий гребінь із кургану Солоха (кінець V – початок IV ст. до н. е.)",
+    "author": "Levan Ramishvili",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Scythian_gold_comb_with_the_image_of_a_battle_scene,_from_the_Solokha_kurgan,_430-390_BC_(47362587962).jpg"
+  },
+  {
+    "id": "t02-pectoral",
+    "file": "t02/pectoral.webp",
+    "title": "Золота пектораль із кургану Товста Могила (IV ст. до н. е.)",
+    "author": "Terminator (uk.wikipedia)",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Pektoral111.JPG"
+  },
+  {
+    "id": "t02-zbruch",
+    "file": "t02/zbruch.webp",
+    "title": "Збруцький ідол (IX ст.)",
+    "author": "Silar",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:O98_Idol_von_Sbrutsch_mit_Darstellung_von_Unterwelt,_Erde_und_des_Himmels,_zirka_10._Jh._n._Chr..JPG"
+  },
+  {
+    "id": "t02-khersones",
+    "file": "t02/khersones.webp",
+    "title": "Руїни Херсонеса Таврійського (Севастополь)",
+    "author": "Maxim Gavrilyuk",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Chersonesos_Taurica-2009.jpg"
+  },
+  {
+    "id": "t04-uspensky-volodymyr",
+    "file": "t04/uspensky-volodymyr.webp",
+    "title": "Успенський собор у Володимирі (1160)",
+    "author": "Petro Vlasenko",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Dormition_volyn.jpg"
+  },
+  {
+    "id": "t04-pantaleon",
+    "file": "t04/pantaleon.webp",
+    "title": "Церква Святого Пантелеймона поблизу Галича (кінець XII – початок XIII ст.)",
+    "author": "Raimond Spekking",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Saint_Panteleimon_Church,_Shevchenkove,_Ukraine-6264.jpg"
+  },
+  {
+    "id": "t04-kholm-icon",
+    "file": "t04/kholm-icon.webp",
+    "title": "Холмська ікона Богородиці",
+    "author": "Невідомий автор",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:%D0%A5%D0%BE%D0%BB%D0%BC%D1%81%D1%8C%D0%BA%D0%B0_%D1%96%D0%BA%D0%BE%D0%BD%D0%B0_%D0%91%D0%BE%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%B8%D1%86%D1%96_%D0%9E%D0%B4%D0%B8%D0%B3%D1%96%D1%82%D1%80%D1%96%D1%97.jpg"
+  },
+  {
+    "id": "t04-dorohobuzh-icon",
+    "file": "t04/dorohobuzh-icon.webp",
+    "title": "Дорогобузька ікона Богородиці Одигітрії (XIII ст.)",
+    "author": "Невідомий автор",
+    "license": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:%D0%94%D0%BE%D1%80%D0%BE%D0%B3%D0%BE%D0%B1%D1%83%D0%B7%D1%8C%D0%BA%D0%B0_%D1%96%D0%BA%D0%BE%D0%BD%D0%B0_%D0%91%D0%BE%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%B8%D1%86%D1%96_%D0%9E%D0%B4%D0%B8%D0%B3%D1%96%D1%82%D1%80%D1%96%D1%97.jpg"
+  },
+  {
+    "id": "t05-armenian",
+    "file": "t05/armenian.webp",
+    "title": "Вірменський собор у Львові (1363–1370)",
+    "author": "Varga Attila",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Lviv-Armenian.jpg"
+  },
+  {
+    "id": "t05-kamianets",
+    "file": "t05/kamianets.webp",
+    "title": "Кам’янець-Подільська фортеця",
+    "author": "Rbrechko",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:68-104-9007_Kamianets-Podilskyi_Fortress_RB_18_2.jpg"
+  },
+  {
+    "id": "t05-bartholomew",
+    "file": "t05/bartholomew.webp",
+    "title": "Костел Святого Варфоломія в Дрогобичі",
+    "author": "Romankravchuk",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Drohobych_ChurchSt2018.jpg"
+  },
+  {
+    "id": "t05-lutsk",
+    "file": "t05/lutsk.webp",
+    "title": "Луцький замок (замок Любарта)",
+    "author": "Nataliya Shestakova",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Lutsk_Lubarts%27_Castle_02_(YDS_5502).jpg"
+  },
+  {
+    "id": "t05-sudak",
+    "file": "t05/sudak.webp",
+    "title": "Генуезька фортеця в Судаку",
+    "author": "Artem Topchiy (Art-top)",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:2006-06-15_%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D0%93%D0%B5%D0%BD%D1%83%D1%8D%D0%B7%D1%81%D0%BA%D1%83%D1%8E_%D0%BA%D1%80%D0%B5%D0%BF%D0%BE%D1%81%D1%82%D1%8C_(3).jpg"
+  },
+  {
+    "id": "t05-palanok",
+    "file": "t05/palanok.webp",
+    "title": "Замок Паланок у Мукачеві",
+    "author": "Vasil stecko",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:%D0%97%D0%B0%D0%BC%D0%BE%D0%BA_%D1%96%D0%B7_%D0%B2%D0%B8%D1%81%D0%BE%D1%82%D0%B8_%D0%BF%D1%82%D0%B0%D1%88%D0%B8%D0%BD%D0%BE%D0%B3%D0%BE_%D0%BF%D0%BE%D0%BB%D1%8C%D0%BE%D1%82%D1%83_1.JPG"
+  },
+  {
+    "id": "t05-khotyn",
+    "file": "t05/khotyn.webp",
+    "title": "Хотинська фортеця",
+    "author": "Rbrechko",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Khotyn_Fortress_RB.jpg"
+  },
+  {
+    "id": "t05-bakhchysarai",
+    "file": "t05/bakhchysarai.webp",
+    "title": "Ханський палац у Бахчисараї",
+    "author": "Tiia Monto",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Bakhchisarai_Palace2.jpg"
+  },
+  {
+    "id": "t05-sutkivtsi",
+    "file": "t05/sutkivtsi.webp",
+    "title": "Покровська церква-фортеця в Сутківцях (1467)",
+    "author": "Vinnserg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:%D0%A1%D0%B5%D1%80%D0%B5%D0%B4%D0%BD%D1%8C%D0%BE%D0%B2%D1%96%D1%87%D0%BD%D0%B0_%D1%86%D0%B5%D1%80%D0%BA%D0%B2%D0%B0-%D1%84%D0%BE%D1%80%D1%82%D0%B5%D1%86%D1%8F.jpg"
+  },
+  {
+    "id": "t05-medzhybizh",
+    "file": "t05/medzhybizh.webp",
+    "title": "Меджибізький замок",
+    "author": "Катерина Байдужа (SvartKat)",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Medzhybizh_Castle.jpg"
   }
 ]
